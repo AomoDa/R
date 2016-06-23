@@ -1,3 +1,4 @@
+#关联分析代码
 ```R
 setwd("D:/R/table")  #设置工作目录
 library(Matrix)  #加载Matrix包，因为此R版本为3.1.0，加载arules包时，需要先加载此包
@@ -104,5 +105,6 @@ which(redundant) #确定出冗余规则的下标索引
 rules.all.pruned<-rules.all.sorted[!redundant] #排除列和数大于等于1 的数据元素
 inspect(rules.all.pruned) #输出新的矩阵
 
+
+
 ```
-  
