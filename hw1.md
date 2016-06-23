@@ -73,37 +73,12 @@ Apriori
 Parameter specification:
 confidence minval smax arem  aval originalSupport support minlen maxlen
 0.6    0.1    1 none FALSE            TRUE     0.2      1     10
- target   ext
-  rules FALSE
-Algorithmic control:
-filter tree heap memopt load sort verbose
-0.1 TRUE TRUE  FALSE TRUE    2    TRUE
-Absolute minimum support count: 14 
-set item appearances ...[4 item(s)] done [0.00s].
-set transactions ...[234 item(s), 71 transaction(s)] done [0.00s].
-sorting and recoding items ... [148 item(s)] done [0.00s].
-creating transaction tree ... done [0.00s].
-checking subsets of size 1 2 3 4 5 done [0.00s].
-writing ... [9 rule(s)] done [0.00s].
-creating S4 object  ... done [0.00s].
+ 
 > summary(br)
 set of 9 rules
 rule length distribution (lhs + rhs):sizes
 2 3 
 3 6 
-  Min. 1st Qu.  Median    Mean 3rd Qu.    Max. 
-  2.000   2.000   3.000   2.667   3.000   3.000 
-summary of quality measures:
-    support         confidence          lift      
- Min.   :0.2113   Min.   :0.6000   Min.   :1.469  
- 1st Qu.:0.2113   1st Qu.:0.6000   1st Qu.:1.669  
- Median :0.2113   Median :0.6296   Median :1.775  
- Mean   :0.2160   Mean   :0.6587   Mean   :1.716  
- 3rd Qu.:0.2113   3rd Qu.:0.7143   3rd Qu.:1.781  
- Max.   :0.2394   Max.   :0.7500   Max.   :1.849  
-mining info:
- data ntransactions support confidence
-  xxx            71     0.2        0.6
 > inspect(br)
  lhs         rhs    
 1 {大学物理C(2)=B} => {毕业设计=C}
@@ -126,7 +101,7 @@ mining info:
 8 0.2112676 0.6000000  1.468966
 9 0.2394366 0.6296296  1.541507
 ```
-3.3	关联规则可视化
+###3.3	关联规则可视化
 ```r
 > plot(br)
 > plot(br, method="matrix", measure=c("lift", "confidence"))
