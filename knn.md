@@ -49,11 +49,11 @@ KNN的一些其他问题的思考可参看延伸阅读文献3。
 这里应用`ISLR`包里的`Caravan`数据集，先大致浏览一下：
 
 ```R
-&gt; library(ISLR)
-&gt; str(Caravan)
+ library(ISLR)
+ str(Caravan)
 'data.frame':	5822 obs. of  86 variables:
  $ Purchase: Factor w/ 2 levels &quot;No&quot;,&quot;Yes&quot;: 1 1 1 1 1 1 1 1 1 1 ...
-&gt; table(Caravan$Purchase)/sum(as.numeric(table(Caravan$Purchase)))
+ table(Caravan$Purchase)/sum(as.numeric(table(Caravan$Purchase)))
         No        Yes 
 0.94022673 0.05977327 
 ```
@@ -63,46 +63,46 @@ KNN的一些其他问题的思考可参看延伸阅读文献3。
 由于KNN算法要计算距离，这85个数值型变量量纲不同，相同两个点在不同特征变量上的距离差值可能非常大。因此要**归一化**，这是Machine Learning的常识。这里直接用`scale()`函数将各连续型变量进行正态标准化，即转化为服从均值为0，标准差为1的正态分布。
 
 ```R
-&gt; standardized.X=scale(Caravan[,-86])
-&gt; mean(standardized.X[,sample(1:85,1)])
+ standardized.X=scale(Caravan[,-86])
+ mean(standardized.X[,sample(1:85,1)])
 [1] -2.047306e-18
-&gt; var(standardized.X[,sample(1:85,1)])
+ var(standardized.X[,sample(1:85,1)])
 [1] 1
-&gt; mean(standardized.X[,sample(1:85,1)])
+ mean(standardized.X[,sample(1:85,1)])
 [1] 1.182732e-17
-&gt; var(standardized.X[,sample(1:85,1)])
+ var(standardized.X[,sample(1:85,1)])
 [1] 1
-&gt; mean(standardized.X[,sample(1:85,1)])
+ mean(standardized.X[,sample(1:85,1)])
 [1] -3.331466e-17
-&gt; var(standardized.X[,sample(1:85,1)])
+ var(standardized.X[,sample(1:85,1)])
 [1] 1
 ```
 
 可见随机抽取一个标准化后的变量，基本都是均值约为0，标准差为1。
 
 ```R
-&gt; #前1000观测作为测试集，其他当训练集
-&gt; test &lt;- 1:1000
-&gt; train.X &lt;- standardized.X[-test,]
-&gt; test.X &lt;- standardized.X[test,]
-&gt; train.Y &lt;- Caravan$Purchase[-test]
-&gt; test.Y &lt;- Caravan$Purchase[test]
-&gt; knn.pred &lt;- knn(train.X,test.X,train.Y,k=)
-&gt; mean(test.Y!=knn.pred)
+ #前1000观测作为测试集，其他当训练集
+ test &lt;- 1:1000
+ train.X &lt;- standardized.X[-test,]
+ test.X &lt;- standardized.X[test,]
+ train.Y &lt;- Caravan$Purchase[-test]
+ test.Y &lt;- Caravan$Purchase[test]
+ knn.pred &lt;- knn(train.X,test.X,train.Y,k=)
+ mean(test.Y!=knn.pred)
 [1] 0.117
-&gt; mean(test.Y!=&quot;No&quot;)
+ mean(test.Y!=&quot;No&quot;)
 [1] 0.059
 ```
 
 当K=1时，KNN总体的分类结果在测试集上的错误率约为12%。由于大部分的人都不买保险（先验概率只有6%），那么如果模型预测不买保险的准确率应当很高，纠结于预测不买保险实际上却买保险的样本没有意义，同样的也不必考虑整体的准确率（Accuracy）。作为保险销售人员，只需要关心在模型预测下会买保险的人中有多少真正会买保险，这是精准营销的精确度（Precision）；因此，在这样的业务背景中，**应该着重分析模型的Precesion，而不是Accuracy。**
 
 ```R
-&gt; table(knn.pred,test.Y)
+ table(knn.pred,test.Y)
         test.Y
 knn.pred  No Yes
      No  874  50
      Yes  67   9
-&gt; 9/(67+9)
+ 9/(67+9)
 [1] 0.1184211
 ```
 
@@ -111,12 +111,12 @@ knn.pred  No Yes
 下面尝试K取不同的值：
 
 ```R
-&gt; knn.pred &lt;- knn(train.X,test.X,train.Y,k=3)
-&gt; table(knn.pred,test.Y)[2,2]/rowSums(table(knn.pred,test.Y))[2]
+ knn.pred &lt;- knn(train.X,test.X,train.Y,k=3)
+ table(knn.pred,test.Y)[2,2]/rowSums(table(knn.pred,test.Y))[2]
 Yes 
 0.2 
-&gt; knn.pred &lt;- knn(train.X,test.X,train.Y,k=5)
-&gt; table(knn.pred,test.Y)[2,2]/rowSums(table(knn.pred,test.Y))[2]
+ knn.pred &lt;- knn(train.X,test.X,train.Y,k=5)
+ table(knn.pred,test.Y)[2,2]/rowSums(table(knn.pred,test.Y))[2]
       Yes 
 0.2666667 
 ```
@@ -126,12 +126,12 @@ Yes
 作为对比，这个案例再用逻辑回归做一次！
 
 ```R
-&gt; glm.fit &lt;- glm(Purchase~.,data=Caravan,family = binomial,subset = -test)
+ glm.fit &lt;- glm(Purchase~.,data=Caravan,family = binomial,subset = -test)
 Warning message:
 glm.fit:拟合機率算出来是数值零或一 
-&gt; glm.probs &lt;- predict(glm.fit,Caravan[test,],type = &quot;response&quot;)
-&gt; glm.pred &lt;- ifelse(glm.probs &gt;0.5,&quot;Yes&quot;,&quot;No&quot;)
-&gt; table(glm.pred,test.Y)
+ glm.probs &lt;- predict(glm.fit,Caravan[test,],type = &quot;response&quot;)
+ glm.pred &lt;- ifelse(glm.probs 0.5,&quot;Yes&quot;,&quot;No&quot;)
+ table(glm.pred,test.Y)
         test.Y
 glm.pred  No Yes
      No  934  59
@@ -141,8 +141,8 @@ glm.pred  No Yes
 这个分类效果就差很多，Precision竟然是0！事实上，分类概率阈值为0.5是针对等可能事件，但买不买保险显然不是等可能事件，把阈值降低到0.25再看看：
 
 ```R
-&gt; glm.pred &lt;- ifelse(glm.probs &gt;0.25,&quot;Yes&quot;,&quot;No&quot;)
-&gt; table(glm.pred,test.Y)
+ glm.pred &lt;- ifelse(glm.probs 0.25,&quot;Yes&quot;,&quot;No&quot;)
+ table(glm.pred,test.Y)
         test.Y
 glm.pred  No Yes
      No  919  48
@@ -160,36 +160,36 @@ glm.pred  No Yes
 在R中，KNN分类函数是`knn()`，KNN回归函数是`knnreg()`。
 
 ```R
-&gt; #加载数据集BloodBrain，用到向量logBBB和数据框bbbDescr
-&gt; library(caret)
-&gt; data(BloodBrain)
-&gt; class(logBBB)
+ #加载数据集BloodBrain，用到向量logBBB和数据框bbbDescr
+ library(caret)
+ data(BloodBrain)
+ class(logBBB)
 [1] &quot;numeric&quot;
-&gt; dim(bbbDescr)
+ dim(bbbDescr)
 [1] 208 134
-&gt; #取约80%的观测作训练集。
-&gt; inTrain &lt;- createDataPartition(logBBB, p = .8)[[1]]
-&gt; trainX &lt;- bbbDescr[inTrain,] 
-&gt; trainY &lt;- logBBB[inTrain]
-&gt; testX &lt;- bbbDescr[-inTrain,]
-&gt; testY &lt;- logBBB[-inTrain]
-&gt; #构建KNN回归模型
-&gt; fit &lt;- knnreg(trainX, trainY, k = 3) 
-&gt; fit
+ #取约80%的观测作训练集。
+ inTrain &lt;- createDataPartition(logBBB, p = .8)[[1]]
+ trainX &lt;- bbbDescr[inTrain,] 
+ trainY &lt;- logBBB[inTrain]
+ testX &lt;- bbbDescr[-inTrain,]
+ testY &lt;- logBBB[-inTrain]
+ #构建KNN回归模型
+ fit &lt;- knnreg(trainX, trainY, k = 3) 
+ fit
 3-nearest neighbor regression model
-&gt; #KNN回归模型预测测试集
-&gt; pred &lt;- predict(fit, testX)
-&gt; #计算回归模型的MSE
-&gt; mean((pred-testY)^2)
+ #KNN回归模型预测测试集
+ pred &lt;- predict(fit, testX)
+ #计算回归模型的MSE
+ mean((pred-testY)^2)
 [1] 0.5821147
 ```
 
 这个KNN回归模型的MSE只有0.58，可见回归效果很不错，偏差很小！下面用可视化图形比较一下结果。
 
 ```R
-&gt; #将训练集、测试集和预测值结果集中比较
-&gt; df &lt;-data.frame(class=c(rep(&quot;trainY&quot;,length(trainY)),rep(&quot;testY&quot;,length(testY)),rep(&quot;predY&quot;,length(pred))),Yval=c(trainY,testY,pred))
-&gt; ggplot(data=df,mapping = aes(x=Yval,fill=class))+
+ #将训练集、测试集和预测值结果集中比较
+ df &lt;-data.frame(class=c(rep(&quot;trainY&quot;,length(trainY)),rep(&quot;testY&quot;,length(testY)),rep(&quot;predY&quot;,length(pred))),Yval=c(trainY,testY,pred))
+ ggplot(data=df,mapping = aes(x=Yval,fill=class))+
 +   geom_dotplot(alpha=0.8)
 ```
 
@@ -198,9 +198,9 @@ glm.pred  No Yes
 这是dotplot，横坐标才是响应变量的值，纵坐标表频率。比较相邻的红色点和绿色点在横轴上的差异，即表明测试集中预测值与实际值的差距。
 
 ```R
-&gt; #比较测试集的预测值和实际值
-&gt; df2 &lt;- data.frame(testY,pred)
-&gt; ggplot(data=df2,mapping = aes(x=testY,y=pred))+
+ #比较测试集的预测值和实际值
+ df2 &lt;- data.frame(testY,pred)
+ ggplot(data=df2,mapping = aes(x=testY,y=pred))+
 +   geom_point(color=&quot;steelblue&quot;,size=3)+
 +   geom_abline(slope = 1,size=1.5,linetype=2)
 ```
@@ -215,7 +215,7 @@ glm.pred  No Yes
 
 ### 参考文献
 
-Gareth James et al. &lt;u&gt;An Introduction to Statistical Learning&lt;/u&gt;.
+Gareth James et al. &lt;uAn Introduction to Statistical Learning&lt;/u.
 
 Wikipedia. [k-nearest neighbors algorithm](https://en.wikipedia.org/wiki/K-nearest_neighbors_algorithm).
 
