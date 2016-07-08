@@ -4,6 +4,8 @@ library(psych)
 library(MASS)
 library(car)
 library(ggplot2)
+library(rpart)
+library(randomForest)
 
 x <- read.xlsx2(file = '数据.xlsx',sheetIndex = 1,header = T,
     colClasses = c('character',rep('numeric', 14)),stringsAsFactors=F)
@@ -104,3 +106,71 @@ ggplot(data=res,aes(x=1:35,y=res,fill=res))+geom_bar(stat='identity')+
 
 
 
+
+# CART 回归树
+
+cart  <- rpart(value~.,data=x.train,control=rpart.control(minbucket = 20,xval = 10,maxdepth = 10))
+cart
+summary(cart)
+plotcp(cart)
+
+cart_prune <- prune(cart,cp=0.026)
+cart_prune$cptable
+plot(cart_prune,main='CART回归树')
+text(cart_prune,all = T)
+
+res$cart  <- predict(cart_prune,newdata = x.test)
+res$cart_res  <- res$V1 - res$cart
+
+ggplot(data=res,aes(x=1:35))+geom_path(aes(y=cart),group=1,col='green')+geom_path(aes(y=V1),group=1,col='red')+
+   scale_x_continuous(breaks = 1:35,labels = row.names(res))+
+   theme(axis.text.x=element_text(angle=90))+
+   labs(x='',y='房价',title='房价CART预测 VS 实际')
+
+ggplot(data=res,aes(x=1:35,y=cart_res,fill=res))+geom_bar(stat='identity')+
+   scale_x_continuous(breaks = 1:35,labels = row.names(res))+
+   theme(axis.text.x=element_text(angle=90))+
+   labs(x='',y='房价残差',title='房价CART预测残差示意图')
+
+
+# 随机森林
+
+rf <- randomForest(value~.,data=x.train,importance=T,ntree=500)
+rf
+plot(rf,ylim=c(5,20))
+varImpPlot(rf,main='变量重要性')
+
+res$rf <- predict(rf,newdata = x.test)
+res$rf_res <- res$V1-res$rf
+
+ggplot(data=res,aes(x=1:35))+geom_path(aes(y=rf),group=1,col='orange')+geom_path(aes(y=V1),group=1,col='red')+
+   scale_x_continuous(breaks = 1:35,labels = row.names(res))+
+   theme(axis.text.x=element_text(angle=90))+
+   labs(x='',y='房价',title='房价随机森林预测 VS 实际')
+
+ggplot(data=res,aes(x=1:35,y=rf_res,fill=res))+geom_bar(stat='identity')+
+   scale_x_continuous(breaks = 1:35,labels = row.names(res))+
+   theme(axis.text.x=element_text(angle=90))+
+   labs(x='',y='房价残差',title='房价随机森林预测残差示意图')
+
+
+
+#综合比较
+
+ggplot(data=res,aes(x=1:35))+geom_path(aes(y=rf),group=1,col='orange')+geom_path(aes(y=V1),group=1,col='red')+
+        geom_path(aes(y=cart),group=1,col='green')+geom_path(aes(y=fit),group=1,col='blue')+
+   scale_x_continuous(breaks = 1:35,labels = row.names(res))+
+   theme(axis.text.x=element_text(angle=90))+
+   labs(x='',y='房价',title='三种模型房价预测 VS 实际')
+
+new <- rbind(data.frame(id=1:35,模型='线性回归',res=res$res),
+  data.frame(id=1:35,模型='CART回归树',res=res$cart_res),
+  data.frame(id=1:35,模型='随机森林',res=res$rf_res))
+
+ggplot(data=new,aes(x=id,weight=res,fill=模型))+geom_bar(position='dodge')+
+   scale_x_continuous(breaks = 1:35,labels = row.names(res))+
+   theme(axis.text.x=element_text(angle=90))+
+   labs(x='',y='房价残差',title='房价随机森林预测残差示意图')
+
+apply(res[,c(5,7,9)],MARGIN = 2,mean)
+apply(res[,c(5,7,9)],MARGIN = 2,var)
