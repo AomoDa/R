@@ -13,7 +13,7 @@ library(rattle)
 
 #  第二题
 # 读取txt文件
-setwd("C://Users//AomoDa//Documents")
+
 weather <- read.csv('weather.txt',sep=' ',header = T)
 #读取csv文件
 weather<- read.csv('weather.csv',header = T,sep=',')
@@ -36,7 +36,7 @@ nrow(weather_train);nrow(weather_verify);nrow(weather_test)
 # 第三题
 
 # 读取数据
-setwd("C://Users//AomoDa//Documents")
+
 mobile  <- read.csv('mobile.csv')
 mobile$流失 <- factor(x = mobile$流失,levels = c(0,1),labels = c('未流失','流失'))
 mobile$客户等级 <- as.factor(mobile$客户等级)
