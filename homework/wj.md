@@ -201,6 +201,10 @@ four<-function(x){
 y<-data.frame(就餐方面=mean(as.numeric(x[1:3])), 医疗方面=mean(as.numeric(x[4:7])),生活方面=mean(as.numeric(x[8:14])),社区服务=mean(as.numeric(x[15:19])))
 return(y)
 }
+require(plyr)
+x <- data_num
+x$km <- km7$cluster
+km_fac<-ddply(.data = x,.variables = .(km),function(x) apply(x,2,mean))[,1:19]
 km_f<-round(rbind(four(km_fac[1,]),four(km_fac[2,]),four(km_fac[3,]),four(km_fac[4,]),four(km_fac[5,]),four(km_fac[6,]),four(km_fac[7,])),2)
 barplot(t(km_f),beside = T,horiz = T,density = c(10,20,30,40),main='kmodes分类结果对比')
 abline(v = 1,col='red',lty=2)
