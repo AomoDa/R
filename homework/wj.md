@@ -155,6 +155,7 @@ par(mfrow=c(1,1),las=1)
 ## 后项分析
 
 通过以下几个约束，建立关联分析模型
+
 * 目的：探索老人在什么情况下更需要“安全呼救”、“上门维修”、“社区药店”
 * 支持度：30%以上
 * 置信度：80%以上
@@ -162,16 +163,19 @@ par(mfrow=c(1,1),las=1)
 * 最小规则长度：2位以上
 
 从输出的规则的，可以解读为：
+
 * 36%的老人同时选择需要送餐服务和社区药店；需要送餐服务的老人中有84%的老人需要社区药店，是正常需要社区药店比例的1.17倍。
 * 35%的老人同时选择需要打扫卫生和安全呼救；需要打扫卫生的老人中有85%的老人需要安全呼救，是正常需要安全呼救比例的1.15倍。
 * 其他规则如下表。
 
 
 结合以上规则，可以分析得出以下结论：
+
 * 老人如果需要送餐服务或社区餐厅的情况下，更有可能需要社区药店。
 * 老人如果选择打扫卫生、康复理疗、送餐服务、家庭医生和结对关怀的情况下，更有可能需要安全呼救。
 
 原因分析：
+
 * 原因1(我暂时想不到，你比较专业，可以根据我的结论分析下原因。。。)
 * 原因2
 
@@ -192,6 +196,7 @@ plot(r,method ='matrix',control=list(col=gray(1:10/10)))
 ## 前项分析
 
 通过以下几个约束，建立关联分析模型
+
 * 目的：探索老人选择“安全呼救”、“上门维修”、“社区药店”任何一项服务之后，更有可能选择模型服务。
 * 支持度：20%以上
 * 置信度：60%以上
@@ -199,10 +204,12 @@ plot(r,method ='matrix',control=list(col=gray(1:10/10)))
 * 最小规则长度：2位以上
 
 通过规则表和分析结果图，可以总结出以下几个结论：
+
 * 老人在需要社区药店、上门维修和安全呼救，往往更有可能需要社区餐厅、康复理疗和锻炼健身。
 * 等等
 
 原因分析：
+
 * 原因1(我暂时想不到，你比较专业，可以根据我的结论分析下原因。。。)
 * 原因2
 
@@ -223,20 +230,27 @@ plot(r_q,method ='matrix',control=list(col=gray(1:10/10)))
 ##综合分析及结论
 
 结合前后项分析的结论可以发现：
+
 * 社区餐厅、康复理疗是安全呼救、上门维修和社区药店关联程度非常高，这五项在总体需求排行中比例也非常高。后项分析中关联的结果全部都是这五项，因此这五个项目的出现相互关联和相互需要，缺一不可。
 * 前项分析得出老人如果需要送餐服务、打扫卫生、家庭医生、结对关怀，则更容易需要安全呼救、上门维修和社区药店。
 
 # k-modes 聚类分析
 
+* k-modes 算法具有随机性，因此每次的结论都不一定相同。
+
 通过使用kmodes聚类分析，将所有老人进行分类，针对不同特征的老人进行合理照料，才能将资源最大化。
 
 
-将所有样本分别聚类成5、6、7和8个类别，通过比较Kmodes的目标函数值和相异度值发现，将样本聚类成7个类别时，模型的目标函数值和相异度最小，因此7个类别为最优类别数量。
+将所有样本分别聚类成1到8类别，通过比较Kmodes的目标函数值和相异度值发现，将样本聚类成3个类别时，模型的目标函数值为转折点。
 
 
 ##建模及模型选择
 ```{r}
 set.seed(123)
+km1 <- kmodes(data = data_factor_new,modes = 1,iter.max = 10)
+km2 <- kmodes(data = data_factor_new,modes = 2,iter.max = 10)
+km3 <- kmodes(data = data_factor_new,modes = 3,iter.max = 10)
+km4 <- kmodes(data = data_factor_new,modes = 4,iter.max = 10)
 km5 <- kmodes(data = data_factor_new,modes = 5,iter.max = 10)
 km6 <- kmodes(data = data_factor_new,modes = 6,iter.max = 10)
 km7 <- kmodes(data = data_factor_new,modes = 7,iter.max = 10)
@@ -257,6 +271,10 @@ b[i]<-sum(apply(X = xx,MARGIN = 1,FUN = d_one))
 return(sum(b))
 }
 x <- data.frame(
+km1=c(final_target(data = data_factor_new,model = km1),sum(km1$withindiff)),
+km2=c(final_target(data = data_factor_new,model = km2),sum(km2$withindiff)),
+km3=c(final_target(data = data_factor_new,model = km3),sum(km3$withindiff)),
+km4=c(final_target(data = data_factor_new,model = km4),sum(km4$withindiff)),
 km5=c(final_target(data = data_factor_new,model = km5),sum(km5$withindiff)),
 km6=c(final_target(data = data_factor_new,model = km6),sum(km6$withindiff)),
 km7=c(final_target(data = data_factor_new,model = km7),sum(km7$withindiff)),
@@ -265,43 +283,42 @@ row.names=c('相异度测量值','k_modes目标函数值')
 )
 return(round(x,0))
 }
-better_model()
+model_choice <- better_model()
 ```
 
-将样本分类成7个类别。其中
-* 第1类共129位老人，占比20.4%，
-* 第2类共116位老人，占比18.4%，
-* 第3类共91位老人，占比14.4%，
-* 第4类共90位老人，占比14.3%，
-* 第5类共83位老人，占比13.2%，
-* 第6类共74位老人，占比11.7%，
-* 第7类共48位老人，占比7.6%。
+
+从下图中可以发现对比出当K=3或者K=6的时候，为折线图的转折点，因此可以考虑将数据划分成3个类别或者6个类别。考虑到实际情况，我们将数据划分成3个类别。
 
 ```{r}
-km7$size
-round(prop.table(km7$size),3)
+plot(as.numeric(model_choice[2,]),type='b',main='kmodes目标函数值 VS K 图')
+```
+
+
+##3个类别
+将样本分类成3个类别。其中
+
+* 第1类共231位老人，占比36.6%，
+* 第2类共227位老人，占比36%，
+* 第3类共173位老人，占比27.4%。
+
+```{r}
+km3$size
+round(prop.table(km3$size),3)
 ```
 
 
 每个类别的聚类划分依据如下表：
 ```{r}
-km7$modes
+km3$modes
 ```
 
+##量化分析
+
+* 这个你可以考虑，如果不需要就直接删除。
+* 总体分析和详细分析，全部都是量化的，不行就直接删除。
 
 
-##模型总体分析
-
-通过分析每个类别的老人的数据，总结得出每个类别的特征是：
-* 第1类老人中，对社区服务需求程度较高，其他需求服务中等。
-* 第2类老人中，对社区服需要程度中等，其他需求都很低。
-* 第3类老人中，对所有项目需求程度都非常高。
-* 第4类老人中，对就餐方面和医疗方面需求程度高，其他方面需求中等。
-* 第5类老人中，对医疗方面需求程度高，就餐方面和社区服务中等，对生活方面需求较低。
-* 第6类老人中，对医疗方面需求程度中等，其他方面需求程度低。
-* 第7类老人中，就餐方面和医疗方面需求程度高，生活方面需求中等，社区服务需求程度低。
-
-
+### 总体
 ```{r}
 km_plot_sum <- function() {
 four<-function(x){
@@ -310,9 +327,9 @@ return(y)
 }
 require(plyr)
 x <- data_num
-x$km <- km7$cluster
+x$km <- km3$cluster
 km_fac<-ddply(.data = x,.variables = .(km),function(x) apply(x,2,mean))[,1:19]
-km_f<-round(rbind(four(km_fac[1,]),four(km_fac[2,]),four(km_fac[3,]),four(km_fac[4,]),four(km_fac[5,]),four(km_fac[6,]),four(km_fac[7,])),2)
+km_f<-round(rbind(four(km_fac[1,]),four(km_fac[2,]),four(km_fac[3,])),2)
 barplot(t(km_f),beside = T,horiz = T,density = c(10,20,30,40),main='kmodes分类结果对比')
 abline(v = 1,col='red',lty=2)
 abline(v = 1.5,col='blue',lty=2)
@@ -322,44 +339,37 @@ km_f[km_f >=1 &km_f <1.5 ] <- '中'
 km_f[km_f <1] <- '低'
 return(km_f)
 }
+
 km_plot_sum()
 ```
 
 
-##模型详细分析
-
-每个类别的老人需求程度排行分析。
-
+### 详细
 ```{r}
-# 选择分类为7的分类
 km_plot_detail <- function(n){
 require(plyr)
 x <- data_num
-x$km <- km7$cluster
+x$km <- km3$cluster
 km_fac<-ddply(.data = x,.variables = .(km),function(x) apply(x,2,mean))[,1:19]
-if(n==1) {
-par(mfrow=c(2,2),las=2)
-barplot(as.matrix(sort(km_fac[1,],decreasing = F) ),horiz = T,cex.names = 0.8,density = 20,main='kmodes第1分类需求分数排行')
-barplot(as.matrix(sort(km_fac[2,],decreasing = F) ),horiz = T,cex.names = 1,density = 20,main='kmodes第2分类需求分数排行')
-barplot(as.matrix(sort(km_fac[3,],decreasing = F) ),horiz = T,cex.names = 0.8,density = 20,main='kmodes第3分类需求分数排行')
-barplot(as.matrix(sort(km_fac[4,],decreasing = F) ),horiz = T,cex.names = 1,density = 20,main='kmodes第4分类需求分数排行')
-par(mfrow=c(1,1),las=1)}
-if(n==2){
-par(mfrow=c(2,2),las=2)
-barplot(as.matrix(sort(km_fac[5,],decreasing = F) ),horiz = T,cex.names = 0.8,density = 20,main='kmodes第5分类需求分数排行')
-barplot(as.matrix(sort(km_fac[6,],decreasing = F) ),horiz = T,cex.names = 1,density = 20,main='kmodes第6分类需求分数排行')
-barplot(as.matrix(sort(km_fac[7,],decreasing = F) ),horiz = T,cex.names = 0.8,density = 20,main='kmodes第7分类需求分数排行')
-par(mfrow=c(1,1),las=1)}}
+
+if(n==1) barplot(as.matrix(sort(km_fac[1,],decreasing = F) ),horiz = T,cex.names = 0.7,density = 20,main='kmodes第1分类需求分数排行')
+if(n==2) barplot(as.matrix(sort(km_fac[2,],decreasing = F) ),horiz = T,cex.names = 0.7,density = 20,main='kmodes第2分类需求分数排行')
+if(n==3) barplot(as.matrix(sort(km_fac[3,],decreasing = F) ),horiz = T,cex.names = 0.7,density = 20,main='kmodes第3分类需求分数排行')
+
+}
 
 km_plot_detail(1)
 km_plot_detail(2)
+km_plot_detail(3)
 ```
+
 
 ##聚类分析结论
 
 模型可以总结如下：
+
 * 分类比较良好，能够区分出每类别的老人的特征。
-* 第2类和第6类相似度比较高，可以在合理考虑资源的同时将其合并为一类。
+* 等等
 
 #总体结论
 
