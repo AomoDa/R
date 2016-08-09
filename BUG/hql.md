@@ -38,10 +38,10 @@ dt                  	string
 
 我的hive版本是：
 $ hive --version
-Hive 1.0.0
-Subversion file:///Users/vikram/src/hive/commit/release-1.0.0-rc2 -r Unknown
-Compiled by vikram on Thu Jan 29 16:48:20 PST 2015
-From source with checksum cddf389e4cbba6b5e6aaee2e82a857f5
+\n Hive 1.0.0
+\n Subversion file:///Users/vikram/src/hive/commit/release-1.0.0-rc2 -r Unknown
+\n Compiled by vikram on Thu Jan 29 16:48:20 PST 2015
+\n From source with checksum cddf389e4cbba6b5e6aaee2e82a857f5
 
 
 ## 我的完整的hql语句为：
