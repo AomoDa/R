@@ -84,7 +84,7 @@ select userid,
    from ods_gio_page
    where dt='2016-08-07' and platform='Web' limit 100;
 ```
-正确的结果:
+正确的子表的结果:
 ```csv
 6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	www		10	24	www
 6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	www	course	1	24	www
