@@ -35,9 +35,8 @@ dt                  	string
 ```
 
 
-
-
-以下是我的hql语句。
+## 我的完整的hql语句为：
+以下是我的hql语句，以及查询的结果如下图
 ```sql
 select a.first_page,
 count(distinct if(a.page_num=1,a.userid,null)) as uv,
@@ -54,4 +53,59 @@ from
    where dt='2016-08-07' and platform='Web'
     ) as a
 group by a.first_page
+```
+
+## 错误地方和解析
+###子查询的结果：
+当我只运行子查询的部分的时候，结果是正确的，子查询的sql和正确的结果如下：
+```sql
+select userid,
+   split(parse_url(refer,'HOST'),"\\.")[0] as refer_page,
+   split(domain,"\\.")[0] as first_page,
+   split(path,"\\/")[1] as www_path,
+   ROW_NUMBER() OVER (PARTITION BY userid ORDER BY sendtime) AS page_num,
+   count(1) OVER (PARTITION BY userid )  as n ,
+   FIRST_VALUE(split(domain,"\\.")[0]) OVER (PARTITION BY userid ORDER BY sendtime) as first_ddd
+   from ods_gio_page
+   where dt='2016-08-07' and platform='Web' limit 100;
+```
+正确的结果:
+```csv
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	www		10	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	www	course	1	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	www	course	2	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	NULL	www	course	5	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	NULL	www	course	6	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	www	course	7	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	www	course	8	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	www		9	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	search	course	11	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	search	course	12	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	www		13	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	www		14	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	search	course	15	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	www	search	course	16	24	www
+6c8e70b5-ebdb-443b-8487-9a5bfe17f599	search	www	course	17	24	www
+
+```
+
+###全部运行hql：
+
+输出的结果明显是有问题的，我嵌套了一个子查询，然后对子查询的first_page（位于子查询的第三列，是一些字符串）分组计算。
+\n 结果是这样样子，貌似分组的是一个sendtime字段。
+```csv
+1470499200608	1	0
+1470499200775	1	0
+1470499201348	1	0
+1470499201502	1	0
+1470499201619	1	0
+1470499201987	1	0
+1470499202843	1	0
+1470499204088	1	0
+1470499204952	1	0
+1470499205224	1	0
+1470499205309	1	0
+1470499205916	1	0
+1470499205959	1	0
+
 ```
