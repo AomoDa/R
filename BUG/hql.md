@@ -89,7 +89,7 @@ select userid,
 
 ```
 
-###全部运行hql：
+###运行完整的hql：
 
 输出的结果明显是有问题的，我嵌套了一个子查询，然后对子查询的first_page（位于子查询的第三列，是一些字符串）分组计算。
 \n 结果是这样样子，貌似分组的是一个sendtime字段。
@@ -107,5 +107,42 @@ select userid,
 1470499205309	1	0
 1470499205916	1	0
 1470499205959	1	0
+
+```
+
+## 另外一种方式
+
+我觉得是子查询的问题，所以我创建一个中间表，然后对中间表进行查询：
+```sql
+create table tmp_gio_drop as
+select userid,
+   split(parse_url(refer,'HOST'),"\\.")[0] as refer_page,
+   split(domain,"\\.")[0] as first_page,
+   split(path,"\\/")[1] as www_path,
+   ROW_NUMBER() OVER (PARTITION BY userid ORDER BY sendtime) AS page_num,
+   count(1) OVER (PARTITION BY userid )  as n ,
+   FIRST_VALUE(split(domain,"\\.")[0]) OVER (PARTITION BY userid ORDER BY sendtime) as first_ddd
+   from ods_gio_page
+   where dt='2016-08-07' and platform='Web'
+```
+接下来我把完整的sql改成如下：
+```sql
+select first_page,
+count(distinct if(page_num=1,userid,null )),
+count(distinct if(n=1,userid,null))
+from tmp_gio_drop
+group by first_page
+```
+这下结果就正确了，正确的结果是：
+
+```csv
+blog	178	152
+e	1047	551
+j	1958	1801
+jiuye	140	17
+ke	652	209
+wenda	1313	1176
+wiki	6804	3848
+www	14360	4693
 
 ```
