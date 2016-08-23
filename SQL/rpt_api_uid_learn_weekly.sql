@@ -15,7 +15,7 @@ RANK() OVER (ORDER BY a.avtime DESC )  AS rank_avtime,
 count(1) OVER(ROWS between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) as num_all,
 ceil(avg(a.num_course) OVER(ROWS between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING)) as avg_course,
 ceil(avg(a.num_lesson) OVER(ROWS between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING))as avg_lesson,
-round(avg(a.avtime) OVER(ROWS between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING),2) as avg_avtime
+round(avg(a.avtime) OVER(ROWS between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING),2) as avg_avtime,
 max(a.num_course) OVER(ROWS between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) as max_course,
 max(a.num_lesson) OVER(ROWS between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING)as max_lesson,
 max(a.avtime) OVER(ROWS between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) as max_avtime
