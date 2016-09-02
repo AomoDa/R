@@ -1,6 +1,5 @@
 
 
-
 install.packages("xlsx") # 读取 Excel 文件
 install.packages("ggplot2") #绘图工具
 install.packages("car") #线性回归检验及多重共线性检验
@@ -48,7 +47,7 @@ data_load <- function() {
   x$p68 <- factor(x$p68,levels = 1:4,labels = c('土木结构','砖混结构','钢筋混泥土结构','其他结构'))
   x$p73 <- factor(x$p73,levels = 1:5,labels = c('illness','disability','old','accident','Other'))
   x$p77 <- factor(x$p77,levels = c(0,1),labels = c('No','Yes'))
-  return(x)
+  return(na.omit(x))
 }
 
 x <- data_load()
@@ -94,18 +93,13 @@ p5 <- predict(object = prt5,newdata = x[ind==5,])
 
 # 交叉验证
 
-NMSE <-function(p1,p2,p3,p4,p5) {
- p1 <- p1 
- p2 <- p2 
- p3 <- p3 
- p4 <- p4 
- p5 <- p5 
+NMSE <-function(ob1,ob2,ob3,ob4,ob5) {
  NMSE_RT <- vector()
- NMSE_RT[1] <- mean( (x[ind==1,]$income - p1)^2 ) /mean( (x[ind==1,]$income - mean(x[ind==1,]$income) )^2 )
- NMSE_RT[2] <- mean( (x[ind==2,]$income - p2)^2 ) /mean( (x[ind==2,]$income - mean(x[ind==2,]$income) )^2 )
- NMSE_RT[3] <- mean( (x[ind==3,]$income - p3)^2 ) /mean( (x[ind==3,]$income - mean(x[ind==3,]$income) )^2 )
- NMSE_RT[4] <- mean( (x[ind==4,]$income - p4)^2 ) /mean( (x[ind==4,]$income - mean(x[ind==4,]$income) )^2 )
- NMSE_RT[5] <- mean( (x[ind==5,]$income - p5)^2 ) /mean( (x[ind==5,]$income - mean(x[ind==5,]$income) )^2 )
+ NMSE_RT[1] <- mean( (x[ind==1,]$income - ob1)^2 ,na.rm=T) /mean( (x[ind==1,]$income - mean(x[ind==1,]$income,na.rm=T) )^2 ,na.rm=T)
+ NMSE_RT[2] <- mean( (x[ind==2,]$income - ob2)^2 ,na.rm=T) /mean( (x[ind==2,]$income - mean(x[ind==2,]$income,na.rm=T) )^2 ,na.rm=T)
+ NMSE_RT[3] <- mean( (x[ind==3,]$income - ob3)^2 ,na.rm=T) /mean( (x[ind==3,]$income - mean(x[ind==3,]$income,na.rm=T) )^2 ,na.rm=T)
+ NMSE_RT[4] <- mean( (x[ind==4,]$income - ob4)^2 ,na.rm=T) /mean( (x[ind==4,]$income - mean(x[ind==4,]$income,na.rm=T) )^2,na.rm=T )
+ NMSE_RT[5] <- mean( (x[ind==5,]$income - ob5)^2,na.rm=T ) /mean( (x[ind==5,]$income - mean(x[ind==5,]$income,na.rm=T) )^2 ,na.rm=T)
  return(NMSE_RT) 
 }
 
@@ -124,6 +118,7 @@ rf5 <- randomForest( formula = income~.,data=x_train_5, ntree=100,na.action = na
 
 ##绘图
 
+# error
 rf_error_plot <- function(){
   plot(rf1,main='RandomForest Error',lty=1)
   plot(rf2,add=T,col='red',lty=2)
@@ -135,13 +130,12 @@ rf_error_plot <- function(){
 
 rf_error_plot()
 
-
-
-#MeanDecreaseAccuracy描述的是当把一个变量变成随机数时,
-#随机森林预测准确度的降低程度，
-#该值越大表示该变量的重要性越大。
-#MeanDecreaseGini通过基尼指数计算每个变量对分类树上每个节点的观测值的异质性影响。该值越大表示该变量的重要性越大。
-
+### importance
+varImpPlot(rf1)
+varImpPlot(rf2)
+varImpPlot(rf3)
+varImpPlot(rf4)
+varImpPlot(rf5)
 
 
 ##预测
@@ -156,5 +150,85 @@ prf5 <- predict(object = rf5,newdata = x[ind==5,])
 
 (nmse_rf <- NMSE(prf1,prf2,prf3,prf4,prf5))
 
+
+
 #bagging回归
+
+##建模
+set.seed(1234)
+bg1 <- bagging(formula = income ~ ., data = x_train_1,coob=F,nbagg=300)
+bg2 <- bagging(formula = income ~ ., data = x_train_2,coob=F,nbagg=300)
+bg3 <- bagging(formula = income ~ ., data = x_train_3,coob=F,nbagg=300)
+bg4 <- bagging(formula = income ~ ., data = x_train_4,coob=F,nbagg=300)
+bg5 <- bagging(formula = income ~ ., data = x_train_5,coob=F,nbagg=300)
+
+##预测
+pbg1 <- predict(object = bg1,newdata = x[ind==1,])
+pbg2 <- predict(object = bg2,newdata = x[ind==2,])
+pbg3 <- predict(object = bg3,newdata = x[ind==3,])
+pbg4 <- predict(object = bg4,newdata = x[ind==4,])
+pbg5 <- predict(object = bg5,newdata = x[ind==5,])
+
+## 交叉验证
+(nmse_bg <- NMSE(pbg1,pbg2,pbg3,pbg4,pbg5))
+
+
+
+# boosting回归
+
+get_mboost_formula <- function(){
+  a <- 'income~btree(p11)'
+  for (i in names(x)[c(-25,-1)]) { a <- paste(a,paste('+btree(',i,')',sep=''))}
+  return(formula(a))
+}
+
+##建模
+mb1 <- mboost(formula=get_mboost_formula(),data=x_train_1)
+mb2 <- mboost(formula=get_mboost_formula(),data=x_train_2)
+mb3 <- mboost(formula=get_mboost_formula(),data=x_train_3)
+mb4 <- mboost(formula=get_mboost_formula(),data=x_train_4)
+mb5 <- mboost(formula=get_mboost_formula(),data=x_train_5)
+
+##预测
+
+pmb1 <- predict(object = mb1,newdata = x[ind==1,])
+pmb2 <- predict(object = mb2,newdata = x[ind==2,])
+pmb3 <- predict(object = mb3,newdata = x[ind==3,])
+pmb4 <- predict(object = mb4,newdata = x[ind==4,])
+pmb5 <- predict(object = mb5,newdata = x[ind==5,])
+
+## 交叉验证
+(nmse_mb <- NMSE(pmb1,pmb2,pmb3,pmb4,pmb5))
+
+
+
+# SVR
+##建模
+svr1 <- svm(formula = income ~ ., data = x_train_1)
+svr2 <- svm(formula = income ~ ., data = x_train_2)
+svr3 <- svm(formula = income ~ ., data = x_train_3)
+svr4 <- svm(formula = income ~ ., data = x_train_4)
+svr5 <- svm(formula = income ~ ., data = x_train_5)
+
+##预测
+psvr1 <- predict(object = svr1,newdata = x[ind==1,])
+psvr2 <- predict(object = svr2,newdata = x[ind==2,])
+psvr3 <- predict(object = svr3,newdata = x[ind==3,])
+psvr4 <- predict(object = svr4,newdata = x[ind==4,])
+psvr5 <- predict(object = svr5,newdata = x[ind==5,])
+
+## 交叉验证
+(nmse_svr <- NMSE(psvr1,psvr2,psvr3,psvr4,psvr5))
+
+
+################################################################
+
+# 综合比较
+
+A <- cbind(nmse_svr,nmse_mb,nmse_bg,nmse_rf,nmse_rt)
+A_mean <- apply(A,MARGIN = 2,FUN = mean)
+barplot(sort(A_mean),col= 3:7,density = 30,main = '不同模型的平均 MSE ')
+
+
+
 
