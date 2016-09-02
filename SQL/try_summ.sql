@@ -78,6 +78,45 @@ where dt='2016-08-21' and domain='www.jikexueyuan.com'
      and path regexp 'zhiye[/]course[/][0-9]+[.]html'
 group by split(split(path,'\\/')[3],'\\.')[0]  ) as z on x.goods_id=z.goods_id
 
+--------------------------------------------------------------------------------------------------------
+
+select 
+d.product_id,
+count(distinct d.uid) as all_user,
+count(distinct if(e.n_day=1,d.uid,null)  ) as d_1,
+count(distinct if(e.n_day=2,d.uid,null)  ) as d_2,
+count(distinct if(e.n_day=3,d.uid,null)  ) as d_3,
+count(distinct if(e.n_day=4,d.uid,null)  ) as d_4,
+count(distinct if(e.n_day=5,d.uid,null)  ) as d_6,
+count(distinct if(e.n_day=6,d.uid,null)  ) as d_6,
+avg(e.n_day),
+avg(e.pv)
+
+from
+
+(select 
+    uid,
+    product_id,
+    count(distinct uid) as n,
+    count(distinct if(status=1,uid,null)) as num_order,
+    sum(if(status=1,total_fee,0)) as succ_money
+from db_jkxy_order_info
+where to_date(created_at)<='2016-08-19'  and is_delete=0 and app_id=3  and status=1
+group by uid,product_id
+) as d
+left join 
+(select 
+    split(cs1,':')[1] as cs1,
+    split(path,'\\/')[3] as goods_id,
+    count(1) as pv  ,
+    count(distinct dt) as n_day
+from ods_gio_page
+where dt>='2016-08-19' and domain='xue.jikexueyuan.com' 
+     and path regexp 'zhiye[/]course[/][0-9]+[/]' 
+     group by  split(cs1,':')[1] ,
+     split(path,'\\/')[3] 
+    ) as e on d.uid=e.cs1 and d.product_id=e.goods_id 
+group by d.product_id
 
 
 
