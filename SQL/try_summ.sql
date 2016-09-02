@@ -19,7 +19,8 @@ c.goods_title,
 count(distinct if(a.query not like '%try=1%',a.cs1,null)) as s_n ,
 count(distinct if(a.query like '%try=1%',a.cs1,null))  as try_n,
 count(distinct if(b.eventvalue like '%立即报名%',a.cs1,null)) try_bm,
-count(distinct if(a.query like '%try=1%',a.userid,null)) - count(distinct if(a.query like '%try=1%' and b.userid is not null,a.userid,null))  as try_b
+count(distinct if(a.query like '%try=1%',a.userid,null)) - 
+  count(distinct if(a.query like '%try=1%' and b.userid is not null,a.userid,null))  as try_b
 from 
 (select 
 userid,
