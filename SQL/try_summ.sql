@@ -77,3 +77,25 @@ from ods_gio_page
 where dt='2016-08-21' and domain='www.jikexueyuan.com' 
      and path regexp 'zhiye[/]course[/][0-9]+[.]html'
 group by split(split(path,'\\/')[3],'\\.')[0]  ) as z on x.goods_id=z.goods_id
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+--
