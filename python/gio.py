@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 # coding=utf8
+# py 2.7.5
 
 import hashlib
 import hmac
