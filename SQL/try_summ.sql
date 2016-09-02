@@ -119,7 +119,31 @@ where dt>='2016-08-19' and domain='xue.jikexueyuan.com'
 group by d.product_id
 
 
+------------------------------------------------------------------------------------
 
+
+
+select 
+a.dt,
+a.domain,
+if(split(a.path,'[/]')[1] like '%course%','course',a.path),
+a.goods_id,
+a.pv,
+a.uv,
+b.goods_title 
+from 
+(select 
+'$dt' as dt,
+parse_url(refer,'HOST') as domain ,
+parse_url(refer,'PATH') as path ,
+split(split(path,'\\/')[3],'\\.')[0] as goods_id,
+count(1) as pv,
+count(distinct userid) as uv
+from ods_gio_page
+where dt = '$dt'  and platform='Web' and 
+      domain like '%www.jikexueyuan.com%' and path regexp 'zhiye[/]course[/][0-9]+[.]html'
+group by parse_url(refer,'HOST'),parse_url(refer,'PATH'),split(split(path,'\\/')[3],'\\.')[0]) as a
+left join (select * from  mds_v6_goods_releation) as b  on a.goods_id=b.goods_id and b.app_id=3
 
 
 
