@@ -150,7 +150,7 @@ prf1 <- predict(object = rf1,newdata = x[ind==1,])
 prf2 <- predict(object = rf2,newdata = x[ind==2,])
 prf3 <- predict(object = rf3,newdata = x[ind==3,])
 prf4 <- predict(object = rf4,newdata = x[ind==4,])
-prf5 <- predict(object = rf5,newdata = x[ind==4,])
+prf5 <- predict(object = rf5,newdata = x[ind==5,])
 
 ## 交叉验证
 
