@@ -13,11 +13,11 @@ knitr::opts_chunk$set(echo = TRUE)
 # Part 1
 ## Data  Describe
 
- * The Behavioral Risk Factor Surveillance System (BRFSS) is the nation's premier system of health-related telephone surveys that collect state data about U.S. residents regarding their health-related risk behaviors, chronic health conditions, and use of preventive services. BRFSS is used to collect prevalence data among adult U.S. residents regarding their risk behaviors and preventive health practices that can affect their health status. Respondent data are forwarded to CDC to be aggregated for each state, returned with standard tabulations, and published at year's end by each state.
+* The Behavioral Risk Factor Surveillance System (BRFSS) is the nation's premier system of health-related telephone surveys that collect state data about U.S. residents regarding their health-related risk behaviors, chronic health conditions, and use of preventive services. BRFSS is used to collect prevalence data among adult U.S. residents regarding their risk behaviors and preventive health practices that can affect their health status. Respondent data are forwarded to CDC to be aggregated for each state, returned with standard tabulations, and published at year's end by each state.
+
+* The BRFSS is a cross-sectional telephone survey conducted by state health departments with technical and methodological assistance provided by the CDC. In addition to all 50 states, the BRFSS is also conducted by health departments in The District of Columbia, Guam, Puerto Rico, and the U.S. Virgin Islands.
  
- * The BRFSS is a cross-sectional telephone survey conducted by state health departments with technical and methodological assistance provided by the CDC. In addition to all 50 states, the BRFSS is also conducted by health departments in The District of Columbia, Guam, Puerto Rico, and the U.S. Virgin Islands.
- 
-  * By collecting behavioral health risk data at the state and local level, BRFSS has become a powerful tool for targeting and building health promotion activities. As a result, BRFSS users have increasingly demanded more data and asked for more questions on the survey
+* By collecting behavioral health risk data at the state and local level, BRFSS has become a powerful tool for targeting and building health promotion activities. As a result, BRFSS users have increasingly demanded more data and asked for more questions on the survey
 
 ##Answer
 
