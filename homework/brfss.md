@@ -76,7 +76,8 @@ load('brfss2013.RData')
 # genhlth
 # Would you say that in general your health is:
 # poorhlth
-# During the past 30 days, for about how many days did poor physical or mental health keep you from doing your usual activities, such as self-care, work, or recreation?
+# During the past 30 days, for about how many days did poor physical or mental health 
+#keep you from doing your usual activities, such as self-care, work, or recreation?
 mydata <- brfss2013[,c('sex','genhlth','poorhlth','sleptim1')]
 mydata <- na.omit(mydata)
 ```
