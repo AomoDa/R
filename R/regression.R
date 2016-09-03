@@ -377,6 +377,23 @@ get_bp_formula <- function(){
  return(formula(a))
 }
 
+
+NMSE_TRAIN_BP <-function(ob1,ob2,ob3,ob4,ob5) {
+ NMSE_RT <- vector()
+ ob1 <- predict(ob1,x[ind!=1,])* sd(x_train_1$income) + mean(x_train_1$income)
+ ob2 <- predict(ob2,x[ind!=2,])* sd(x_train_2$income) + mean(x_train_2$income)
+ ob3 <- predict(ob3,x[ind!=3,])* sd(x_train_3$income) + mean(x_train_3$income)
+ ob4 <- predict(ob4,x[ind!=4,])* sd(x_train_4$income) + mean(x_train_4$income)
+ ob5 <- predict(ob5,x[ind!=5,])* sd(x_train_5$income) + mean(x_train_5$income)
+ NMSE_RT[1] <- mean( (x[ind!=1,]$income - ob1)^2 ,na.rm=T) /mean( (x[ind!=1,]$income - mean(x[ind!=1,]$income,na.rm=T) )^2 ,na.rm=T)
+ NMSE_RT[2] <- mean( (x[ind!=2,]$income - ob2)^2 ,na.rm=T) /mean( (x[ind!=2,]$income - mean(x[ind!=2,]$income,na.rm=T) )^2 ,na.rm=T)
+ NMSE_RT[3] <- mean( (x[ind!=3,]$income - ob3)^2 ,na.rm=T) /mean( (x[ind!=3,]$income - mean(x[ind!=3,]$income,na.rm=T) )^2 ,na.rm=T)
+ NMSE_RT[4] <- mean( (x[ind!=4,]$income - ob4)^2 ,na.rm=T) /mean( (x[ind!=4,]$income - mean(x[ind!=4,]$income,na.rm=T) )^2,na.rm=T )
+ NMSE_RT[5] <- mean( (x[ind!=5,]$income - ob5)^2,na.rm=T ) /mean( (x[ind!=5,]$income - mean(x[ind!=5,]$income,na.rm=T) )^2 ,na.rm=T)
+ return(round(NMSE_RT,3)) 
+}
+
+
 # 建模
 set.seed(2345)
 bp1 <- nnet(get_bp_formula(),data=x_train_1,size=10,decay=0.1 ,linout=T)
@@ -398,7 +415,7 @@ pbp5 <- predict(object = bp5,newdata = x[ind==5,]) * sd(x_train_5$income) + mean
 (nmse_bp <- NMSE(pbp1,pbp2,pbp3,pbp4,pbp5))
 
 # [1] 0.450 0.500 0.517 0.697 0.584
-(nmse_bp_train <- NMSE_TRAIN(bp1,bp2,bp3,bp4,bp5))
+(nmse_bp_train <- NMSE_TRAIN_BP(bp1,bp2,bp3,bp4,bp5))
 # [1] 1.602 1.614 1.503 1.729 1.582
 
 
