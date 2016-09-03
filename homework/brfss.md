@@ -2,11 +2,7 @@
 title: "Exploring the BRFSS data"
 author: "AomoDa"
 date: "2016-08-25"
-output: 
-    html_document:
-    fig_height: 4
-    highlight: pygments
-    theme: spacelab
+output: html_document:
 ---
 
 ```{r setup, include=FALSE}
