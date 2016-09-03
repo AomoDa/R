@@ -12,7 +12,7 @@ eval(parse(text = 'date()'))
 
 #### 如何将数值分配到一个文本型的变量？
 
-```
+```R
 assign('a',value = iris)
 
 assign('a',value = lm(y~x))
