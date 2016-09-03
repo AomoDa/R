@@ -1,3 +1,3 @@
 
 
-[http://docs.ggplot2.org/current/] ggplot2
+[ggplot2] http://docs.ggplot2.org/current/
