@@ -18,3 +18,18 @@ assign('a',value = iris)
 assign('a',value = lm(y~x))
  
 ```
+
+#### 如何得到一个b文本型变量的值？
+
+```r
+get('a')
+```
+####如何生成一个命令？
+
+使用call
+```r
+
+eval(call('lm',Petal.Width~.,data=iris))
+# lm(Petal.Width~.,data=iris)
+```
+
