@@ -31,5 +31,10 @@ get('a')
 
 eval(call('lm',Petal.Width~.,data=iris))
 # lm(Petal.Width~.,data=iris)
+
+call('round',call('sum',55,25)，2) 
+#round(sum(55, 25), 2)
+
+eval(call('round',call('sum',55,25),2))#80
 ```
 
