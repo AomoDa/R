@@ -416,7 +416,7 @@ pbp5 <- predict(object = bp5,newdata = x[ind==5,]) * sd(x_train_5$income) + mean
 
 # [1] 0.450 0.500 0.517 0.697 0.584
 (nmse_bp_train <- NMSE_TRAIN_BP(bp1,bp2,bp3,bp4,bp5))
-# [1] 1.602 1.614 1.503 1.729 1.582
+#[1] 0.426 0.453 0.344 0.369 0.407
 
 
 ################################################################
@@ -431,15 +431,15 @@ pbp5 <- predict(object = bp5,newdata = x[ind==5,]) * sd(x_train_5$income) + mean
 (A <- cbind(nmse_svr_train,nmse_mb_train,nmse_bg_train,nmse_rf_train,
             nmse_rt_train,nmse_lm_train,nmse_bp_train,nmse_ct_train))
 #     nmse_svr_train nmse_mb_train nmse_bg_train nmse_rf_train nmse_rt_train nmse_lm_train nmse_bp_train nmse_ct_train
-#[1,]          0.655         0.613         0.468         0.094         0.526         0.652         1.602         0.658
-#[2,]          0.653         0.594         0.440         0.095         0.505         0.660         1.614         0.594
-#[3,]          0.641         0.601         0.468         0.106         0.573         0.637         1.503         0.586
-#[4,]          0.596         0.571         0.419         0.083         0.493         0.741         1.729         0.574
-#[5,]          0.661         0.608         0.468         0.101         0.581         0.655         1.582         0.611
+#[1,]          0.655         0.613         0.468         0.094         0.526         0.652         0.426         0.658
+#[2,]          0.653         0.594         0.440         0.095         0.505         0.660         0.453         0.594
+#[3,]          0.641         0.601         0.468         0.106         0.573         0.637         0.344         0.586
+#[4,]          0.596         0.571         0.419         0.083         0.493         0.741         0.369         0.574
+#[5,]          0.661         0.608         0.468         0.101         0.581         0.655         0.407         0.611
 
 (A_mean <- apply(A,MARGIN = 2,FUN = mean))
 #nmse_svr_train  nmse_mb_train  nmse_bg_train  nmse_rf_train  nmse_rt_train  nmse_lm_train  nmse_bp_train  nmse_ct_train 
-#        0.6412         0.5974         0.4526         0.0958         0.5356         0.6690         1.6060         0.6046 
+#        0.6412         0.5974         0.4526         0.0958         0.5356         0.6690         0.3998         0.6046 
 barplot(sort(A_mean),col= 3:7,density = 30,main = '不同模型的训练样本平均 MSE ')
 
 #--------------------------------------------------------------------------------------
