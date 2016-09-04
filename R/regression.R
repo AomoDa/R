@@ -336,16 +336,16 @@ pmb5 <- predict(object = mb5,newdata = x[ind==5,])
 
 
 #-------------------------------------------------------------------------------------
-#>>>>>>>>>>>>>>>>>>SVR
+#>>>>>>>>>>>>>>>>>>EP_SVR
 #-------------------------------------------------------------------------------------
 
 
 ##建模
-svr1 <- svm(formula = income ~ ., data = x_train_1)
-svr2 <- svm(formula = income ~ ., data = x_train_2)
-svr3 <- svm(formula = income ~ ., data = x_train_3)
-svr4 <- svm(formula = income ~ ., data = x_train_4)
-svr5 <- svm(formula = income ~ ., data = x_train_5)
+svr1 <- svm(formula = income ~ ., data = x_train_1,scale=T,type='eps-regression')
+svr2 <- svm(formula = income ~ ., data = x_train_2,scale=T,type='eps-regression')
+svr3 <- svm(formula = income ~ ., data = x_train_3,scale=T,type='eps-regression')
+svr4 <- svm(formula = income ~ ., data = x_train_4,scale=T,type='eps-regression')
+svr5 <- svm(formula = income ~ ., data = x_train_5,scale=T,type='eps-regression')
 
 ##预测
 psvr1 <- predict(object = svr1,newdata = x[ind==1,])
@@ -361,103 +361,99 @@ psvr5 <- predict(object = svr5,newdata = x[ind==5,])
 # [1] 0.655 0.653 0.641 0.596 0.661
 
 
+#-------------------------------------------------------------------------------------
+#>>>>>>>>>>>>>>>>>>NU_SVR
+#-------------------------------------------------------------------------------------
+
+
+##建模
+nusvr1 <- svm(formula = income ~ ., data = x_train_1,scale=T,type='nu-regression')
+nusvr2 <- svm(formula = income ~ ., data = x_train_2,scale=T,type='nu-regression')
+nusvr3 <- svm(formula = income ~ ., data = x_train_3,scale=T,type='nu-regression')
+nusvr4 <- svm(formula = income ~ ., data = x_train_4,scale=T,type='nu-regression')
+nusvr5 <- svm(formula = income ~ ., data = x_train_5,scale=T,type='nu-regression')
+
+##预测
+pnusvr1 <- predict(object = nusvr1,newdata = x[ind==1,])
+pnusvr2 <- predict(object = nusvr2,newdata = x[ind==2,])
+pnusvr3 <- predict(object = nusvr3,newdata = x[ind==3,])
+pnusvr4 <- predict(object = nusvr4,newdata = x[ind==4,])
+pnusvr5 <- predict(object = nusvr5,newdata = x[ind==5,])
+
+## 交叉验证
+(nmse_nusvr <- NMSE(pnusvr1,pnusvr2,pnusvr3,pnusvr4,pnusvr5))
+# [1] 0.662 0.639 0.679 0.806 0.609
+
+(nmse_nusvr_train <- NMSE_TRAIN(nusvr1,nusvr2,nusvr3,nusvr4,nusvr5))
+# [1] 0.650 0.649 0.637 0.587 0.656
+
 
 #-------------------------------------------------------------------------------------
-#>>>>>>>>>>>>> BP神级网络
+#>>>>>>>>>>>>> single-hidden-layer neural network
 #-------------------------------------------------------------------------------------
 
 
 ##数据预处理
 
-get_bp_formula <- function(){
- a <-'scale(income)~scale(p13)'
- x <-x[,-21]
- for (i in 2:length(x)) {  
-    a <-  ifelse(is.numeric(x[,i]),paste(a,paste( ' +scale(',names(x)[i],' )' ,sep=''  ),sep='' ) ,paste(a, '+' ,names(x)[i],sep=''   ))   }
- return(formula(a))
-}
-
-
-NMSE_TRAIN_BP <-function(ob1,ob2,ob3,ob4,ob5) {
- NMSE_RT <- vector()
- ob1 <- predict(ob1,x[ind!=1,])* sd(x_train_1$income) + mean(x_train_1$income)
- ob2 <- predict(ob2,x[ind!=2,])* sd(x_train_2$income) + mean(x_train_2$income)
- ob3 <- predict(ob3,x[ind!=3,])* sd(x_train_3$income) + mean(x_train_3$income)
- ob4 <- predict(ob4,x[ind!=4,])* sd(x_train_4$income) + mean(x_train_4$income)
- ob5 <- predict(ob5,x[ind!=5,])* sd(x_train_5$income) + mean(x_train_5$income)
- NMSE_RT[1] <- mean( (x[ind!=1,]$income - ob1)^2 ,na.rm=T) /mean( (x[ind!=1,]$income - mean(x[ind!=1,]$income,na.rm=T) )^2 ,na.rm=T)
- NMSE_RT[2] <- mean( (x[ind!=2,]$income - ob2)^2 ,na.rm=T) /mean( (x[ind!=2,]$income - mean(x[ind!=2,]$income,na.rm=T) )^2 ,na.rm=T)
- NMSE_RT[3] <- mean( (x[ind!=3,]$income - ob3)^2 ,na.rm=T) /mean( (x[ind!=3,]$income - mean(x[ind!=3,]$income,na.rm=T) )^2 ,na.rm=T)
- NMSE_RT[4] <- mean( (x[ind!=4,]$income - ob4)^2 ,na.rm=T) /mean( (x[ind!=4,]$income - mean(x[ind!=4,]$income,na.rm=T) )^2,na.rm=T )
- NMSE_RT[5] <- mean( (x[ind!=5,]$income - ob5)^2,na.rm=T ) /mean( (x[ind!=5,]$income - mean(x[ind!=5,]$income,na.rm=T) )^2 ,na.rm=T)
- return(round(NMSE_RT,3)) 
-}
-
-
 # 建模
 set.seed(2345)
-bp1 <- nnet(get_bp_formula(),data=x_train_1,size=10,decay=0.1 ,linout=T)
-bp2 <- nnet(get_bp_formula(),data=x_train_2,size=10,decay=0.1 ,linout=T)
-bp3 <- nnet(get_bp_formula(),data=x_train_3,size=10,decay=0.1 ,linout=T)
-bp4 <- nnet(get_bp_formula(),data=x_train_4,size=10,decay=0.1 ,linout=T)
-bp5 <- nnet(get_bp_formula(),data=x_train_5,size=10,decay=0.1 ,linout=T)
-
+shnt1 <- nnet(income~.,data=x_train_1,size=10,decay=0.01 ,linout=T,scale=T,rang=0.1,Hess=T,maxit=500)
+shnt2 <- nnet(income~.,data=x_train_2,size=10,decay=0.01 ,linout=T,scale=T,rang=0.1,Hess=T,maxit=500)
+shnt3 <- nnet(income~.,data=x_train_3,size=10,decay=0.01 ,linout=T,scale=T,rang=0.1,Hess=T,maxit=500)
+shnt4 <- nnet(income~.,data=x_train_4,size=10,decay=0.01 ,linout=T,scale=T,rang=0.1,Hess=T,maxit=500)
+shnt5 <- nnet(income~.,data=x_train_5,size=10,decay=0.01 ,linout=T,scale=T,rang=0.1,Hess=T,maxit=500)
 
 #预测
-pbp1 <- predict(object = bp1,newdata = x[ind==1,]) * sd(x_train_1$income) + mean(x_train_1$income)
-pbp2 <- predict(object = bp2,newdata = x[ind==2,]) * sd(x_train_2$income) + mean(x_train_2$income)
-pbp3 <- predict(object = bp3,newdata = x[ind==3,]) * sd(x_train_3$income) + mean(x_train_3$income)
-pbp4 <- predict(object = bp4,newdata = x[ind==4,]) * sd(x_train_4$income) + mean(x_train_4$income)
-pbp5 <- predict(object = bp5,newdata = x[ind==5,]) * sd(x_train_5$income) + mean(x_train_5$income)
+pshnt1 <- predict(object = shnt1,newdata = x[ind==1,]) 
+pshnt2 <- predict(object = shnt2,newdata = x[ind==2,]) 
+pshnt3 <- predict(object = shnt3,newdata = x[ind==3,])
+pshnt4 <- predict(object = shnt4,newdata = x[ind==4,]) 
+pshnt5 <- predict(object = shnt5,newdata = x[ind==5,]) 
 
+(nmse_shnt <- NMSE(pshnt1,pshnt2,pshnt3,pshnt4,pshnt5))
+# [1] 0.583 0.677 0.622 0.718 0.614
+(nmse_shnt_train <- NMSE_TRAIN(shnt1,shnt2,shnt3,shnt4,shnt5))
+#[1] 0.628 0.642 0.494 0.616 0.638
 
-# 验证
-(nmse_bp <- NMSE(pbp1,pbp2,pbp3,pbp4,pbp5))
-
-# [1] 0.450 0.500 0.517 0.697 0.584
-(nmse_bp_train <- NMSE_TRAIN_BP(bp1,bp2,bp3,bp4,bp5))
-#[1] 0.426 0.453 0.344 0.369 0.407
 
 
 ################################################################
 
 # 综合比较
 
-
-
 #--------------------------------------------------------------------------------------
 ## 训练样本比较
 #--------------------------------------------------------------------------------------
 (A <- cbind(nmse_svr_train,nmse_mb_train,nmse_bg_train,nmse_rf_train,
-            nmse_rt_train,nmse_lm_train,nmse_bp_train,nmse_ct_train))
-#     nmse_svr_train nmse_mb_train nmse_bg_train nmse_rf_train nmse_rt_train nmse_lm_train nmse_bp_train nmse_ct_train
-#[1,]          0.655         0.613         0.468         0.094         0.526         0.652         0.426         0.658
-#[2,]          0.653         0.594         0.440         0.095         0.505         0.660         0.453         0.594
-#[3,]          0.641         0.601         0.468         0.106         0.573         0.637         0.344         0.586
-#[4,]          0.596         0.571         0.419         0.083         0.493         0.741         0.369         0.574
-#[5,]          0.661         0.608         0.468         0.101         0.581         0.655         0.407         0.611
+            nmse_rt_train,nmse_lm_train,nmse_shnt_train,nmse_ct_train,nmse_nusvr_train))
+#     nmse_svr_train nmse_mb_train nmse_shnt_train nmse_rf_train nmse_rt_train nmse_lm_train nmse_bp_train nmse_ct_train nmse_nusvr_train
+#[1,]          0.655         0.613         0.468         0.094         0.526         0.652         0.628         0.658            0.650
+#[2,]          0.653         0.594         0.440         0.095         0.505         0.660         0.642         0.594            0.649
+#[3,]          0.641         0.601         0.468         0.106         0.573         0.637         0.494         0.586            0.637
+#[4,]          0.596         0.571         0.419         0.083         0.493         0.741         0.616         0.574            0.587
+#[5,]          0.661         0.608         0.468         0.101         0.581         0.655         0.638         0.611            0.656
 
 (A_mean <- apply(A,MARGIN = 2,FUN = mean))
-#nmse_svr_train  nmse_mb_train  nmse_bg_train  nmse_rf_train  nmse_rt_train  nmse_lm_train  nmse_bp_train  nmse_ct_train 
-#        0.6412         0.5974         0.4526         0.0958         0.5356         0.6690         0.3998         0.6046 
-barplot(sort(A_mean),col= 3:7,density = 30,main = '不同模型的训练样本平均 MSE ')
+#nmse_svr_train  nmse_mb_train  nmse_shnt_train  nmse_rf_train  nmse_rt_train  nmse_lm_train  nmse_bp_train  nmse_ct_train  nmse_nusvr_train
+#        0.6412         0.5974         0.4526         0.0958         0.5356         0.6690         0.6036         0.6046            0.6358
+barplot(sort(A_mean),col= 3:11,density = 30,main = '不同模型的训练样本平均 MSE ')
 
 #--------------------------------------------------------------------------------------
 ## 测试样本比较
 #--------------------------------------------------------------------------------------
 (B <- cbind(nmse_svr,nmse_mb,nmse_bg,nmse_rf,
-            nmse_rt,nmse_lm,nmse_bp,nmse_ct))
-#     nmse_svr nmse_mb nmse_bg nmse_rf nmse_rt nmse_lm nmse_bp nmse_ct
-#[1,]    0.671   0.567   0.465   0.388   0.504   0.749   0.450   0.701
-#[2,]    0.650   0.630   0.588   0.461   0.647   0.738   0.500   0.813
-#[3,]    0.686   0.593   0.444   0.369   0.534   0.827   0.517   0.803
-#[4,]    0.812   0.691   0.595   0.552   0.584   0.562   0.697   0.761
-#[5,]    0.611   0.570   0.472   0.370   0.585   0.762   0.584   0.656
+            nmse_rt,nmse_lm,nmse_bp,nmse_ct,nmse_nusvr))
+#     nmse_svr nmse_mb nmse_bg nmse_rf nmse_rt nmse_lm nmse_shnt nmse_ct nmse_nusvr
+#[1,]    0.671   0.567   0.465   0.388   0.504   0.749   0.583   0.701      0.662
+#[2,]    0.650   0.630   0.588   0.461   0.647   0.738   0.677   0.813      0.639
+#[3,]    0.686   0.593   0.444   0.369   0.534   0.827   0.622   0.803      0.679
+#[4,]    0.812   0.691   0.595   0.552   0.584   0.562   0.718   0.761      0.806
+#[5,]    0.611   0.570   0.472   0.370   0.585   0.762   0.614   0.656      0.609
 
 (B_mean <- apply(B,MARGIN = 2,FUN = mean))
-# nmse_svr  nmse_mb  nmse_bg  nmse_rf  nmse_rt  nmse_lm  nmse_bp  nmse_ct 
-#  0.6860   0.6102   0.5128   0.4280   0.5708   0.7276   0.5496   0.7468 
-barplot(sort(B_mean),col= 3:7,density = 30,main = '不同模型的测试平均 MSE ')
+# nmse_svr  nmse_mb  nmse_bg  nmse_rf  nmse_rt  nmse_lm  nmse_shnt  nmse_ct  nmse_nusvr
+#  0.6860   0.6102   0.5128   0.4280   0.5708   0.7276   0.6428   0.7468        0.679
+barplot(sort(B_mean),col= 3:11,density = 30,main = '不同模型的测试平均 MSE ')
 
 
 
