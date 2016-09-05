@@ -112,7 +112,7 @@
 + caretLSF包和caretNWS 包提供了与caret包类似的功能。 
 
 
-11）统计学习基础（Elements of Statistical Learning）：
+####11 统计学习基础（Elements of Statistical Learning）：
 
 书《The Elements of Statistical Learning: Data Mining, Inference, and Prediction 》[网址](http://www-stat.stanford.edu/~tibs/ElemStatLearn/)
 
