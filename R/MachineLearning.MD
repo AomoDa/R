@@ -6,110 +6,110 @@
 网址：http://cran.r-project.org/web/views/MachineLearning.html 
 
 
-##1 神经网络（Neural Networks）：
+####1 神经网络（Neural Networks）：
 
 nnet包执行单隐层前馈神经网络，nnet是VR包的一部分。 
 
-##2 递归拆分（Recursive Partitioning）：
+####2 递归拆分（Recursive Partitioning）：
 
 
-++ rpart包执行 递归拆分利用树形结构模型，来做回归、分类和生存分析。尤其推荐rpart包。
++ rpart包执行 递归拆分利用树形结构模型，来做回归、分类和生存分析。尤其推荐rpart包。
 
-++ rpart.plot 提供rpart的可视化功能。
++ rpart.plot 提供rpart的可视化功能。
 
-++ tree包执行 递归拆分利用树形结构模型，来做回归、分类和生存分析。
++ tree包执行 递归拆分利用树形结构模型，来做回归、分类和生存分析。
 
-++ Weka包里也有这样的递归拆分法，如：J4.8, C4.5, M5，提供了R与Weka的函数的接口。
++ Weka包里也有这样的递归拆分法，如：J4.8, C4.5, M5，提供了R与Weka的函数的接口。
 
-++ party包提供两类递归拆分算法，能做到无偏的变量选择和停止标准：函数ctree()用非参条件推断法检测自变量和因变量的关系；而函数mob()能用来建立参数模型。另外，party包里也提供二分支树和节点分布的可视化展示。 
++ party包提供两类递归拆分算法，能做到无偏的变量选择和停止标准：函数ctree()用非参条件推断法检测自变量和因变量的关系；而函数mob()能用来建立参数模型。另外，party包里也提供二分支树和节点分布的可视化展示。 
 
-++ mvpart包是rpart的改进包，处理多元因变量的问题。
++ mvpart包是rpart的改进包，处理多元因变量的问题。
 
-++ rpart.permutation包用置换法（permutation）评估树的有效性。
++ rpart.permutation包用置换法（permutation）评估树的有效性。
 
-++ knnTree包建立一个分类树，每个叶子节点是一个knn分类器。
++ knnTree包建立一个分类树，每个叶子节点是一个knn分类器。
 
-++ LogicReg包做逻辑回归分析，针对大多数自变量是二元变量的情况）。
++ LogicReg包做逻辑回归分析，针对大多数自变量是二元变量的情况）。
 
-++ maptree包提供树结构的可视化函数。
++ maptree包提供树结构的可视化函数。
 
-++ pinktoe包提供树结构的可视化函数。 
-
-
-
-##3 随机森林（Random Forests）：
-
-++ randomForest 包提供了用随机森林做回归和分类的函数。
-
-++ ipred包用bagging的思想做回归，分类和生存分析，组合多个模型。
-
-++ party包也提供了基于条件推断树的随机森林法。
-
-++ varSelRF包用随机森林法做变量选择。
++ pinktoe包提供树结构的可视化函数。 
 
 
-## 4 Regularized and Shrinkage Methods：
 
-++ lasso2包  和 lars包 可以执行参数受到某些限制的回归模型。
+####3 随机森林（Random Forests）：
 
-++ elasticnet包可计算所有的收缩参数。
++ randomForest 包提供了用随机森林做回归和分类的函数。
 
-++ glmpath包可以得到广义线性模型和COX模型的L1 regularization path。
++ ipred包用bagging的思想做回归，分类和生存分析，组合多个模型。
 
-++ penalized包执行lasso (L1) 和ridge (L2)惩罚回归模型（penalized regression models）。
++ party包也提供了基于条件推断树的随机森林法。
 
-++ pamr包执行缩小重心分类法(shrunken centroids classifier)。
-
-++ earth包可做多元自适应样条回归（multivariate adaptive regression splines）。 
++ varSelRF包用随机森林法做变量选择。
 
 
-##5 Boosting :
+#### 4 Regularized and Shrinkage Methods：
 
-++ gbm包和boost包执行多种多样的梯度boosting算法，gbm包做基于树的梯度下降boosting，boost包包括LogitBoost和L2Boost。
++ lasso2包  和 lars包 可以执行参数受到某些限制的回归模型。
 
-++ GAMMoost包提供基于boosting的广义相加模型(generalized additive models)的程序）。
++ elasticnet包可计算所有的收缩参数。
 
-++ mboost包做基于模型的boosting。 
++ glmpath包可以得到广义线性模型和COX模型的L1 regularization path。
 
++ penalized包执行lasso (L1) 和ridge (L2)惩罚回归模型（penalized regression models）。
 
-## 6 支持向量机（Support Vector Machines）：
++ pamr包执行缩小重心分类法(shrunken centroids classifier)。
 
-++ e1071包的svm()函数提供R和LIBSVM的接口 。
-
-++ kernlab包为基于核函数的学习方法提供了一个灵活的框架，包括SVM、RVM……。
-
-++ klaR 包提供了R和SVMlight的接口。 
++ earth包可做多元自适应样条回归（multivariate adaptive regression splines）。 
 
 
-##7 贝叶斯方法（Bayesian Methods）：
+####5 Boosting :
 
-++ BayesTree包执行Bayesian Additive Regression Trees (BART)算法。资料：http://www-stat.wharton.upenn.edu/~edgeorge/Research_papers/BART%206--06.pdf
++ gbm包和boost包执行多种多样的梯度boosting算法，gbm包做基于树的梯度下降boosting，boost包包括LogitBoost和L2Boost。
 
-++ tgp包做Bayesian半参数非线性回归（Bayesian nonstationary, semiparametric nonlinear regression）。
++ GAMMoost包提供基于boosting的广义相加模型(generalized additive models)的程序）。
+
++ mboost包做基于模型的boosting。 
 
 
-## 8 基于遗传算法的最优化（Optimization using Genetic Algorithms）：
+#### 6 支持向量机（Support Vector Machines）：
 
-++ gafit包
-++ rgenoud包提供基于遗传算法的最优化程序。 
++ e1071包的svm()函数提供R和LIBSVM的接口 。
 
-## 9 关联规则（Association Rules）：
++ kernlab包为基于核函数的学习方法提供了一个灵活的框架，包括SVM、RVM……。
 
-++ arules包提供了有效处理稀疏二元数据的数据结构，而且提供函数执Apriori和Eclat算法挖掘频繁项集、最大频繁项集、闭频繁项集和关联规则。
++ klaR 包提供了R和SVMlight的接口。 
 
-## 10 模型选择和确认（Model selection and validation）：
 
-++ e1071包的tune()函数在指定的范围内选取合适的参数。
+####7 贝叶斯方法（Bayesian Methods）：
 
-++ ipred包的errorest()函数用重抽样的方法（交叉验证，bootstrap）估计分类错误率。
++ BayesTree包执行Bayesian Additive Regression Trees (BART)算法。资料：http://www-stat.wharton.upenn.edu/~edgeorge/Research_papers/BART%206--06.pdf
 
-++ svmpath包里的函数可用来选取支持向量机的cost参数C。
++ tgp包做Bayesian半参数非线性回归（Bayesian nonstationary, semiparametric nonlinear regression）。
 
-++ ROCR包提供了可视化分类器执行效果的函数，如画ROC曲线。
 
-++ caret包供了各种建立预测模型的函数，包括参数选择和重要性量度。
+#### 8 基于遗传算法的最优化（Optimization using Genetic Algorithms）：
 
-++ caretLSF包和caretNWS 包提供了与caret包类似的功能。 
++ gafit包
++ rgenoud包提供基于遗传算法的最优化程序。 
+
+#### 9 关联规则（Association Rules）：
+
++ arules包提供了有效处理稀疏二元数据的数据结构，而且提供函数执Apriori和Eclat算法挖掘频繁项集、最大频繁项集、闭频繁项集和关联规则。
+
+#### 10 模型选择和确认（Model selection and validation）：
+
++ e1071包的tune()函数在指定的范围内选取合适的参数。
+
++ ipred包的errorest()函数用重抽样的方法（交叉验证，bootstrap）估计分类错误率。
+
++ svmpath包里的函数可用来选取支持向量机的cost参数C。
+
++ ROCR包提供了可视化分类器执行效果的函数，如画ROC曲线。
+
++ caret包供了各种建立预测模型的函数，包括参数选择和重要性量度。
+
++ caretLSF包和caretNWS 包提供了与caret包类似的功能。 
 
 
 11）统计学习基础（Elements of Statistical Learning）：
