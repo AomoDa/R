@@ -3,12 +3,12 @@
 
 机器学习是计算机科学和统计学的边缘交叉领域，R关于机器学习的包主要包括以下几个方面： 
 
-[维护网址](http://cran.r-project.org/web/views/MachineLearning.html,"网站")
+[维护网址](http://cran.r-project.org/web/views/MachineLearning.html)
 
 
 ####1 神经网络（Neural Networks）：
 
-nnet包执行单隐层前馈神经网络，nnet是VR包的一部分。 
++ nnet包执行单隐层前馈神经网络，nnet是VR包的一部分。 
 
 ####2 递归拆分（Recursive Partitioning）：
 
@@ -83,7 +83,7 @@ nnet包执行单隐层前馈神经网络，nnet是VR包的一部分。
 
 ####7 贝叶斯方法（Bayesian Methods）：
 
-+ BayesTree包执行Bayesian Additive Regression Trees (BART)算法。资料：http://www-stat.wharton.upenn.edu/~edgeorge/Research_papers/BART%206--06.pdf
++ BayesTree包执行Bayesian Additive Regression Trees (BART)算法。[资料](http://www-stat.wharton.upenn.edu/~edgeorge/Research_papers/BART%206--06.pdf)
 
 + tgp包做Bayesian半参数非线性回归（Bayesian nonstationary, semiparametric nonlinear regression）。
 
@@ -116,4 +116,4 @@ nnet包执行单隐层前馈神经网络，nnet是VR包的一部分。
 
 书《The Elements of Statistical Learning: Data Mining, Inference, and Prediction 》[网址](http://www-stat.stanford.edu/~tibs/ElemStatLearn/)
 
-里的数据集、函数、例子都被打包放在ElemStatLearn包里。[点击](http://cran.r-project.org/web/packages/ElemStatLearn/index.html)。
+里的数据集、函数、例子都被打包放在ElemStatLearn包里。[书籍链接](http://cran.r-project.org/web/packages/ElemStatLearn/index.html)。
