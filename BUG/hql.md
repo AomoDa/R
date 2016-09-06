@@ -1,4 +1,95 @@
 
+
+
+
+
+###2016.09.06 问题解决：
+使用 hive 2.0.0 问题完美解决。
+估计是hive1.0.0的bug。
+
+```sql
+hive> select a.first_page,
+    > count(distinct if(a.page_num=1,a.userid,null)) as uv,
+    > count(distinct if(a.n=1,a.userid,null))  as drop_rate
+    > from 
+    >   (select userid,
+    >    split(parse_url(refer,'HOST'),"\\.")[0] as refer_page,
+    >    split(domain,"\\.")[0] as first_page,
+    >    split(path,"\\/")[1] as www_path,
+    >    ROW_NUMBER() OVER (PARTITION BY userid ORDER BY sendtime) AS page_num,
+    >    count(1) OVER (PARTITION BY userid )  as n ,
+    >    FIRST_VALUE(split(domain,"\\.")[0]) OVER (PARTITION BY userid ORDER BY sendtime) as first_ddd
+    >    from ods_gio_page
+    >    where dt='2016-08-07' and platform='Web'
+    >     ) as a
+    > group by a.first_page limit 100;
+Query ID = root_20160906232707_a7a36953-8e9a-4a0a-a1d9-d049b98ee9cb
+Total jobs = 1
+Launching Job 1 out of 1
+
+
+Status: Running (Executing on YARN cluster with App id application_1471531268985_0416)
+
+----------------------------------------------------------------------------------------------
+        VERTICES      MODE        STATUS  TOTAL  COMPLETED  RUNNING  PENDING  FAILED  KILLED  
+----------------------------------------------------------------------------------------------
+Map 1 .......... container     SUCCEEDED      5          5        0        0       0       0  
+Reducer 2 ...... container     SUCCEEDED      1          1        0        0       0       0  
+Reducer 3 ...... container     SUCCEEDED      1          1        0        0       0       0  
+Reducer 4 ...... container     SUCCEEDED      1          1        0        0       0       0  
+----------------------------------------------------------------------------------------------
+VERTICES: 04/04  [==========================>>] 100%  ELAPSED TIME: 10.77 s    
+----------------------------------------------------------------------------------------------
+OK
+	23	23
+113	2	2
+127	15	15
+blog	178	152
+download	4	1
+e	1047	551
+fuwu	0	0
+help	8	4
+j	1958	1801
+jiuye	140	17
+ke	651	209
+live	0	0
+m	1	1
+mooc	3	1
+my	108	41
+passport	298	127
+pay	0	0
+qun	21	15
+search	136	40
+tiku	1	1
+translate	2	2
+wenda	1313	1176
+wiki	6804	3848
+www	14361	4693
+xue	18	2
+xuexi	11	4
+zt	3	2
+
+```
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 #背景说明
 
 我在使用hql查询一个语句的时候，发现查询出来的结果和预期的不一样，似乎是串列了。我的原始数据的结构是：
