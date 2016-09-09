@@ -11,7 +11,7 @@
 
 
 ##效果
-![image](https://github.com/AomoDa/R/tree/master/SQL/jpg/1.jpg)
+![image](https://raw.githubusercontent.com/AomoDa/R/master/SQL/jpg/1.jpg)
 ![image](https://github.com/AomoDa/R/tree/master/SQL/jpg/2.jpg)
 ![image](https://github.com/AomoDa/R/tree/master/SQL/jpg/3.jpg)
 
