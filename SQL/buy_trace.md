@@ -12,8 +12,8 @@
 
 ##效果
 ![image](https://raw.githubusercontent.com/AomoDa/R/master/SQL/jpg/1.jpg)
-![image](https://github.com/AomoDa/R/tree/master/SQL/jpg/2.jpg)
-![image](https://github.com/AomoDa/R/tree/master/SQL/jpg/3.jpg)
+![image](https://raw.githubusercontent.com/AomoDa/R/master/SQL/jpg/2.jpg)
+![image](https://raw.githubusercontent.com/AomoDa/R/master/SQL/jpg/3.jpg)
 
 
 ###一张中间表，不要看起来代码多，其实就是2个job，整体25秒左右执行完成。
