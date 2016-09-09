@@ -14,7 +14,7 @@
 ![image](https://github.com/AomoDa/R/tree/master/SQL/jpg/1.jpg)
 ![image](https://github.com/AomoDa/R/tree/master/SQL/jpg/2.jpg)
 ![image](https://github.com/AomoDa/R/tree/master/SQL/jpg/3.jpg)
-![image](https://github.com/panacena/mengqu/blob/master/readme/Screenshot_2016-07-10-22-17- 15_zkk.com.mengqu.png)
+
 
 ###一张中间表，不要看起来代码多，其实就是2个job，整体25秒左右执行完成。
 
