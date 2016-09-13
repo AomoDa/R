@@ -12,3 +12,14 @@ where dt='2016-09-10' and domain='j.jikexueyuan.com'  and  query regexp 'utm_' a
 --2
 --utm_source=jkxy&utm_medium=www-index-a-cf&utm_term=discount&utm_content=jiuye-discount&utm_campaign=teachers-day	
 --{"utm_source":"jkxy","utm_medium":"www-index-a-cf","utm_term":"discount","utm_content":"jiuye-discount","utm_campaign":"teachers-day"}
+
+
+
+
+
+
+
+
+
+
+
