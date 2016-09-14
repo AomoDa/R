@@ -2,7 +2,7 @@
 
 ###效果
 
-![image](https://raw.githubusercontent.com/AomoDa/R/master/SQL/jpg/all.png)
+![Screen Shot](https://raw.githubusercontent.com/AomoDa/R/master/SQL/jpg/all.png)
 
 
 
