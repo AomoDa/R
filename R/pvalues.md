@@ -37,3 +37,25 @@ sample estimates:
 [1] 0.1371887
 > 
 ```
+
+
+
+```r
+ t.test(rnorm(100),rnorm(100))
+
+	Welch Two Sample t-test
+
+data:  rnorm(100) and rnorm(100)
+t = -0.78268, df = 190.78, p-value = 0.4348
+alternative hypothesis: true difference in means is not equal to 0
+95 percent confidence interval:
+ -0.3737408  0.1613970
+sample estimates:
+  mean of x   mean of y 
+-0.04917313  0.05699874 
+
+> 2*(1-pt( -0.78268,df = 190.78 ))
+[1] 1.565215
+> 2*(pt( -0.78268,df = 190.78 ))
+[1] 0.4347855
+```
