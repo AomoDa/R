@@ -63,11 +63,12 @@ boxplot(T,ylim=c(0,3000))
 
 因此，All possible outcomes of a single game and their probabilities：
 
-$$
+
 \begin{aligned}
 P\{R=T,O=T\} = \frac{10}{38}
 \end{aligned}
-$$
+
+
 $$
 \begin{aligned}
 P\{R=T,O=F\} = \frac{8}{38}
