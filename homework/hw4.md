@@ -62,12 +62,12 @@ boxplot(T,ylim=c(0,3000))
 当JOE betting $1 on red numbers成功的时候，记为```{R=T}```,失败时为```{R=F}```。当 betting $1 on odd numbers成功的时候，记为```{O=T}```,失败时记为```{O=F}```
 
 因此，All possible outcomes of a single game and their probabilities：
-
-
+<script type="text/javascript" src="http://cdn.mathjax.org/mathjax/latest/MathJax.js?config=default">
+$$
 \begin{aligned}
 P\{R=T,O=T\} = \frac{10}{38}
 \end{aligned}
-
+$$
 
 $$
 \begin{aligned}
@@ -84,7 +84,7 @@ $$
 P\{R=F,O=F\}= \frac{12}{38}
 \end{aligned}
 $$
-
+</script>
 its expected value:
 
 $$
