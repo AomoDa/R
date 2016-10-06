@@ -1,9 +1,6 @@
-##########################################################
-# DSC5103 Statistics
-# Session 6. Demo of the Bootstrap on Logistic Regression with rare events
-# 2016.9
-#
-##########################################################
+
+#  Demo of the Bootstrap on Logistic Regression with rare events
+
 library("plyr")
 library("ggplot2")
 
