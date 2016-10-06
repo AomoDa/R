@@ -1,7 +1,5 @@
 ##########################################################
-# DSC5103 Statistics
-# Session 6. Demo of Cross-Validation of Logistic Regression classification on the mixture.example dataset
-# 2016.9
+#  Demo of Cross-Validation of Logistic Regression classification on the mixture.example dataset
 #
 # -- based on the mixture.example dataset and documentation in the "ElemStatLearn" package
 ##########################################################
