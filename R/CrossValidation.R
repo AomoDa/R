@@ -1,6 +1,5 @@
 ##########################################################
-# DSC5103 Statistics
-# Session 6. Demo of Cross-Validation
+#  Demo of Cross-Validation
 # 2016.9
 #
 # using the Auto dataset in package "ISLR"
