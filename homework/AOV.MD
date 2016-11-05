@@ -40,8 +40,8 @@ real <-c()
 for (i in 1:k) {
 y <- rnorm(n = 100,mean = 100,sd = 15)
 mean(y)
-upp <- qnorm(p = 0.975)*15/sqrt(100) + mean(y)
-low <- qnorm(p = 0.025)*15/sqrt(100) + mean(y)
+upp <- qnorm(p = alpha)*15/sqrt(100) + mean(y)
+low <- qnorm(p = alpha)*15/sqrt(100) + mean(y)
 real[i] <- ifelse(low<100 & upp >100,1,0 )
 }
 real
@@ -51,7 +51,7 @@ real
 ##方差未知
 
 - 当总体方差未知的时候，采用T检验，计算的T统计量为 $|t|=0.2294253$.
-- 经过计算之后$u$的区间为$[97.4783,103.1811]$,其中自由度为$df=100-1=99$,显著性水平$\alpha=0.05$
+- 经过计算之后$u$的区间为\[97.4783,103.1811]\,其中自由度为\df=100-1=99\,显著性水平\\alpha=0.05\
 
 当df相近的时候，T分布和Z分布相似。
 
