@@ -1,6 +1,6 @@
 ---
 title: "XML Extraction Lab"
-author: Shuya Zhan
+author: AOMODA
 output: html_document
 ---
 
