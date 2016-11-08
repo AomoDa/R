@@ -33,16 +33,16 @@ from
  ( select *
         from trackinitiate.installchannel_bucket 
         where bucketid = '$bucketid' 
-              and ds = '2016-10-13' and appid = '$appid' 
-             and installdate = '2016-10-13' and is_normal = 1 and channelname != 'adwords'  
+              and ds = '$dt' and appid = '$appid' 
+             and installdate = '$dt' and is_normal = 1 and channelname != 'adwords'  
     ) t0 
 
 join
 
-    (select * 
+    (select xcontext['deviceid'] ,max(xcontext) xcontext
         from trackdefault.events2 
         where appid = '$appid' 
-              and ds = '2016-10-13' and xwhat = 'install' and xcontext['deviceid'] is not null 
+              and ds = '$dt' and xwhat = 'install' and xcontext['deviceid'] is not null 
     ) t1  on t0.deviceid = t1.xcontext['deviceid']
 
 left outer join
