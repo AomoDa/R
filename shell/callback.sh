@@ -58,7 +58,7 @@ left outer join
 
 xpath="$appid""_$dt"".csv"
 
-echo $sql
+echo "$sql"
 echo '----------------------------------------'
 sudo -uhive hive -e "$sql" > "$xpath"
 dt=`date -d "$dt +1 day" +%Y-%m-%d`
