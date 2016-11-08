@@ -1,4 +1,3 @@
-
 library(stringr)
 library(mice)
 library(ggplot2)
@@ -9,8 +8,8 @@ library(plyr)
 ## PART 1
 #import data
 
-prescription <- read.csv('input_prescription.csv',header = T,stringsAsFactors = F)
-supply <- read.csv('output_supply.csv',header = T,stringsAsFactors = F)
+prescription <- read.csv('prescription.csv',header = T,stringsAsFactors = F)
+supply <- read.csv('supply.csv',header = T,stringsAsFactors = F)
 prescription$Time <- as.Date(prescription$Time)
 supply$Time <- as.Date(supply$Time)
 
@@ -77,4 +76,18 @@ acf(impute_supply$impute_amount,main='acf of impute_amount')
 pacf(impute_supply$impute_amount,main='pacf of impute_amount')
 par(mfrow=c(1,1))
 
+#-------
 
+##periodogram
+par(mfrow=c(1,2))
+with(impute_supply,spec.pgram(impute_amount))
+abline(v=1/30,col='red',lwd=2)
+text(x=1/15,y=1e11,labels = 'x=1/30',col='red')
+
+periodogram(impute_supply$impute_amount,main='periodogram of \n impute_amount')
+abline(v=1/30,col='red',lwd=2)
+text(x=1/15,y=4e15,labels = 'x=1/30',col='red')
+par(mfrow=c(1,1))
+
+supply_ts <- supply_ts <- ts(impute_supply$impute_amount,frequency = 30)
+plot(decompose(supply_ts,type = 'additive'))
