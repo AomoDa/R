@@ -13,8 +13,8 @@ myf <-function(data_file) {
         a$sessionOrganizer <- NA
         a$organizerAffiliation <-NA
         a$organizerEmail <- NA
-        a$sessionChair <-
-            a$chairAffiliation <-NA
+        a$sessionChair <-NA
+        a$chairAffiliation <-NA
         a$chairEmail <- NA
         a$discussant <- NA
         a$speakerEmail <-NA
