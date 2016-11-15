@@ -176,11 +176,19 @@ Data  is from location parameter theta =0 of a Cauchy distribution .
 
 Compute 10000 simulations with sample sizes n = 10, 20, 40,100 :
 
+MEAN
 method|n=10|n=20|n=40|n=100
 ------|----|----|----|-----
 trim_mean|0.011| -0.013| 0.006 | 0.001
 median|0.005| 0.004 |0.001 |0.002 
 
+
+VAR
+
+method|n=10|n=20|n=40|n=100
+------|----|----|----|-----
+trim_mean|1.742| 0.425| 0.146 |0.052 
+median|0.340 |0.140| 0.064| 0.025 
 
 从Histograms 来看，median估计的效果比 trim_mean 要好点，当N增大的时候，估计值的区间也更加变小，因此猜想估计的效果与sample size 似乎有关系。
 
@@ -200,7 +208,9 @@ for (i in 1:4) {
 }
 
 round(colMeans(mat_theta_trim_mean),3)
+round(apply(mat_theta_trim_mean,2,var),3)
 round(colMeans(mat_theta_median),3)
+round(apply(mat_theta_median,2,var),3)
 
 par(mfrow=c(2,2))
 hist(mat_theta_trim_mean[,1],main='trimmed mean estimated \n n=10')
