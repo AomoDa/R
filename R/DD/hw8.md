@@ -23,7 +23,7 @@ the pvalue of permutation test is 0.789,which indicated we can not reject $H_0$ 
 -----
 
 ```{r}
-load('C://Users//mali//Documents//hw8.RData')
+load('C://Users//aomoda//Documents//hw8.RData')
 chisq_value <- function(tb){
   ex <- outer(rowSums(tb),colSums(tb))/sum(tb)
   return(sum( (tb-ex)^2/ex))
@@ -46,7 +46,7 @@ abline(v=72,col='red',lwd=2)
 ##a
 
 ```{r}
-Bangladesh <- read.csv('C://Users//mali//Documents//Bangladesh.csv')
+Bangladesh <- read.csv('C://Users//aomoda//Documents//Bangladesh.csv')
 par(mfrow=c(1,2))
 boxplot(Bangladesh$Arsenic,main='boxplot of Arsenic')
 hist(Bangladesh$Arsenic)
@@ -114,22 +114,34 @@ finally,I get $$\alpha=0.3\ \  \ , \ \ \beta=11.3$$
 
 -----
 
-median of Arsenic data column in the Bangladesh data is 22,and the  90th percentile is $[14,36.4]$
+median of Arsenic data column in the Bangladesh data is 22,and the  90th percentile is $[0.5,590.5]$
 
 -----
 
 ```{r}
-Bangladesh <- read.csv('C://Users//mali//Documents//Bangladesh.csv')
-set.seed(63)
-bt_median <- replicate(10000,median(sample(Bangladesh$Arsenic,nrow(Bangladesh),replace = T)))
-quantile(bt_median,c(.05,.95))
+Bangladesh <- read.csv('C://Users//aomoda//Documents//Bangladesh.csv')
+median(Bangladesh$Arsenic)
+quantile(Bangladesh$Arsenic,c(0.05,0.95))
 ```
 
 ##b
 
+bias of the median is 1.46349, using the bootstrap 
+
+```{r}
+set.seed(63)
+bt_median <- replicate(10000,median(sample(Bangladesh$Arsenic,nrow(Bangladesh),replace = T)))
+mean(bt_median-22)
+```
+
 
 ##c
 
+the bias of the 90th percentile is $[-8.0,14.4]$, using the bootstrap.
+
+```{r}
+quantile(bt_median-22,c(0.05,0.95))
+```
 
 
 #Q69
@@ -192,7 +204,8 @@ trim_mean|1.742| 0.425| 0.146 |0.052
 median|0.340 |0.140| 0.064| 0.025 
 
 
-从Histograms 来看，median估计的效果比 trim_mean 要好点，当N增大的时候，估计值的区间也更加变小，因此猜想估计的效果与sample size 似乎有关系。
+
+对于N=10,20,40,100,总有$var(median) < var(trim_mean)$,因此 median estimator 的估计是more effcient.
 
 -----
 
