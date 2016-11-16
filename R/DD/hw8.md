@@ -23,7 +23,7 @@ the pvalue of permutation test is 0.789,which indicated we can not reject $H_0$ 
 -----
 
 ```{r}
-load('C://Users//aomoda//Documents//hw8.RData')
+load('C://Users//mali//Documents//hw8.RData')
 chisq_value <- function(tb){
   ex <- outer(rowSums(tb),colSums(tb))/sum(tb)
   return(sum( (tb-ex)^2/ex))
@@ -46,7 +46,7 @@ abline(v=72,col='red',lwd=2)
 ##a
 
 ```{r}
-Bangladesh <- read.csv('C://Users//aomoda//Documents//Bangladesh.csv')
+Bangladesh <- read.csv('C://Users//mali//Documents//Bangladesh.csv')
 par(mfrow=c(1,2))
 boxplot(Bangladesh$Arsenic,main='boxplot of Arsenic')
 hist(Bangladesh$Arsenic)
@@ -64,17 +64,19 @@ par(mfrow=c(1,1))
 
 ```
 
-#Q60
+#Q65
+
+使用mle 计算得出$\lambda=1.87$ for a sample from exponential distribution with size=5 and $\lambda=2$.
 
 ```{r}
-t <- seq(.01,8,by = .01)
+t <- seq(0.01,10,by = .01)
 log.mylikeli.exp <- function(lambda,x){ length(x)*log(lambda) - lambda*sum(x) }
-set.seed(60)
-x1 <- rexp(10,rate = 5)
+set.seed(6565)
+#Make a randomsample of size 5 from an exponential distribution with lambda = 2.
+x1 <- rexp(5,rate = 2)
 y.2 <- sapply(t,function(t){log.mylikeli.exp(t,x1)})
 plot(t,y.2, xlab = 'lambda', ylab = 'loglikelihood', type = 'l', col='red',
-   main='loglikelihood function for \n a sample from an exponential distribution')
-
+   main='loglikelihood function for \n a sample from an exponential distribution  \n with size=5 and lambda=2')
 t[which.max(y.2)]
 ```
 
@@ -95,6 +97,12 @@ $$p=X_1$$
 
 The pdf of $X \sim U(\alpha,\beta)$ is $pdf=\frac{1}{\beta-\alpha} \ \ \ X \in [\alpha,\beta]$.
 
+##**Method 1 :**
+
+As we know $Var(X)=E(X^2) - E(X)^2$, so
+$$E(X^2)=Var(X) + E(X)^2  =  \frac{(\beta - \alpha)^2}{12} + {\frac{\beta +alpha}{2}}^2  =  \frac{1}{3} \cdot (\alpha^2 + \alpha \beta +\beta^2)  =   \frac{1}{3} (4E(X)^2-\alpha \beta )$$
+
+##**Method 2 :**
 
 Use Method of Moments estimate.
 $$E(X)=\int_{\alpha}^{\beta} \frac{X_i}{\beta-\alpha} \ \ dx= \frac{\alpha + \beta}{2}$$
@@ -119,7 +127,7 @@ median of Arsenic data column in the Bangladesh data is 22,and the  90th percent
 -----
 
 ```{r}
-Bangladesh <- read.csv('C://Users//aomoda//Documents//Bangladesh.csv')
+Bangladesh <- read.csv('C://Users//mali//Documents//Bangladesh.csv')
 median(Bangladesh$Arsenic)
 quantile(Bangladesh$Arsenic,c(0.05,0.95))
 ```
@@ -144,6 +152,7 @@ quantile(bt_median-22,c(0.05,0.95))
 ```
 
 
+
 #Q69
 
 ------
@@ -153,29 +162,33 @@ $$L(\theta)=\frac{1}{\pi^n \cdot \prod_{i=1}^{n}[1+(X_i - \theta)^2]}$$
 $$log L(\theta)= - n log(\pi) - \sum_i^n log(1+(X_i- \theta)^2)$$
 
 
-the largest number of local maxima that I can observe is 2.14. 
+the largest number of local maxima that I can observe is 1.13 and the mean of  local maxima that I can observe is -0.0075.
 
 -----
 
 
 ```{r}
-log_cau_mle <- function(theta,x){
-  -length(x) *log(pi) - sum(log(1+(x-theta)^2))
+#likelihood function
+cau_mle <- function(theta,x){
+  1/(pi^length(x)*prod(1+(x-theta)^2))
 }
-set.seed(690)
-N <-100 #100 random samples
+
+set.seed(6900)
+N <-12 #12 random samples
 theta <- numeric(N)
+et <- seq(-30,30,by = 0.01)
+par(mfrow=c(2,2))
 for (i in 1:N) {
 x0 <- rcauchy(n = 10,location = 0)
-et <- seq(-30,30,by = 0.01)
 #Compute the log likelihoods for a range of x0
-cau_v <- sapply(et,function(et){log_cau_mle(et,x0)})
+cau_v <- sapply(et,function(et){cau_mle(et,x0)})
+plot(et,cau_v,type='l',main=paste( i,'th sample  mle \n for Cauchy distributions',sep=''),
+     xlab='location paramete',ylab='log mle',col=i)
 theta[i] <- et[which.max(cau_v)]
 }
-plot(et,cau_v,type='l',main='log mle for Cauchy distributions  \n with location paramete=0',xlab='location paramete',ylab='log mle ')
-hist(theta)
-mean(theta);max(theta)
-
+theta
+mean(theta)
+max(theta)
 ```
 
 
@@ -241,4 +254,3 @@ hist(mat_theta_median[,3],main='median mean estimated \n n=40')
 hist(mat_theta_median[,4],main='median mean estimated \n n=100')
 par(mfrow=c(1,1))
 ```
-
