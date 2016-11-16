@@ -1,16 +1,19 @@
-
-
 #!/bin/bash
-bucketid="93b66b1f67b56a2fe8692cbd835bd8cd"
-appid="6aecde04c49125c54a94bf2faf69c321"
-ds_sub=7
 
-dt='2016-10-31'
-ed='2016-10-31'
+#--------------------------------------------
+# 替换此处的appid，更改起始日期、结束日期即可。其他的不需要
+appid="064f86cbdc474d65df4e9fd47f58213b"
+dt='2016-11-15'
+ed='2016-11-15'
+#--------------------------------------------
+
+bucketid=`mysql -u***** -p***** -h ***** -D***** -e "select bucketid from bucket_appkey where appkey='$appid' " | sed "1d"`
 cnt=$[($(date -d "$ed" +%s)-$(date -d "$dt" +%s))/(24*60*60)]
 
 for((i=0;i<=$cnt;i++))
 do
+ds_sub=`mysql -u***** -p***** -h ***** -D***** -e "select ci_day from setting_history where appkey='$appid' and ds='$dt' " | sed "1d"`
+
 sql="
 select distinct t0.appid as appkey, 
 t0.installtime,
@@ -30,7 +33,7 @@ case when t0.channelid = '_default_' then ''
 case when t0.channelid = '_default_' then '' else t0.ip end as uip
 
 from
- ( select *
+ ( select * 
         from trackinitiate.installchannel_bucket 
         where bucketid = '$bucketid' 
               and ds = '$dt' and appid = '$appid' 
@@ -39,7 +42,7 @@ from
 
 join
 
-    (select xcontext['deviceid'] ,max(xcontext) xcontext
+    (select * 
         from trackdefault.events2 
         where appid = '$appid' 
               and ds = '$dt' and xwhat = 'install' and xcontext['deviceid'] is not null 
@@ -47,19 +50,23 @@ join
 
 left outer join
 
-    (select * 
+    (select *
         from trackdefault.click 
         where appid = '$appid' 
-              and ds >= date_sub('$dt',$ds_sub) and ds <= '$dt' --track.setting_history.ciday ----mysql
+              and ds >= date_sub('$dt',$ds_sub) and ds <= '$dt'
     ) t2 on t0.channelid = t2.xcontext['channelid'] and t0.deviceid = t1.xcontext['deviceid'] 
             and t0.clicktime = t2.xwhen
 
 "
 
-xpath="$appid""_$dt"".csv"
+xpath="$appid""_""$dt"".csv"
 
-echo "$sql"
+echo "appid = ""$appid"
+echo "bucketid = ""$bucketid"
+echo "ci_day = ""$ds_sub"
 echo '----------------------------------------'
-sudo -uhive hive -e "$sql" > "$xpath"
+echo "${sql}"
+echo '----------------------------------------'
+sudo -uhive hive -e "${sql}" > "$xpath"
 dt=`date -d "$dt +1 day" +%Y-%m-%d`
 done
