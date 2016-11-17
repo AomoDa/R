@@ -36,12 +36,12 @@ One of the most prevalent strategies psychologists use to handle multiplicity is
 
 daxue|xi|boy|girl|rate
 -----|--|---|----|----
-**A**|x| 140|17| **8.2352941**
+A|x| 140|17| 8.2352941
 B|x| 1111|  151| 7.3576159
-**A**|y| 153 |1201| **0.1273938**
+A|y| 153 |1201| 0.1273938
 B|y|19 | 192|0.09895833
 A|all|293| 1218 |0.2405583
-**B**|all|1130 | 343| **3.2944606**
+B|all|1130 | 343|3.2944606
 
 -----
 
