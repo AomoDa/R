@@ -34,7 +34,7 @@ One of the most prevalent strategies psychologists use to handle multiplicity is
 
 -----
 
-大学|系|男|女|比例
+daxue|xi|boy|girl|rate
 ----|--|--|--|---
 **A**|x| 140|   17| **8.2352941**
 B|x| 1111|  151| 7.3576159
