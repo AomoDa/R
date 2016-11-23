@@ -65,6 +65,9 @@ Comedy <- dbFetch(dbSendQuery(con," select id, title,production_year from title 
 Comedy
 ```
 
+-----
+-----
+
 To connect to the database, 
 
 ```{r}
