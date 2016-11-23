@@ -65,3 +65,77 @@ Comedy <- dbFetch(dbSendQuery(con," select id, title,production_year from title 
 Comedy
 ```
 
+To connect to the database, 
+
+```{r}
+library(RSQLite)
+drv = dbDriver("SQLite")
+con = dbConnect(drv, dbname = "~/Downloads/lean_imdbpy_2010.db") #your path
+dbListTables(con)
+```
+
+Answer the following 5 questions. In addition, there is 1 bonus question that you can use to improve one of your HW scores or lab scores by 1 point. 
+
+
+## What proportion of the actors are female? 
+
+Assign your answer to 'propF'
+
+```{r, error=TRUE}
+dbListFields(con,"name2")
+all <- dbGetQuery(con, "SELECT count(*) as numProp FROM name2;" )
+female <- dbGetQuery(con, "SELECT count(*) as numPropF FROM name2 WHERE gender = 'f'")
+propF=female / all
+
+```
+
+## How many movies are there in the database? 
+
+Assign your answer to 'numMovies'. Note that by movies, we mean that they are actual movies and not television series, etc.
+
+```{r, error=TRUE}
+
+```
+
+
+## Long-Running TV Series
+
+List the 5 longest running television series (number of seasons). Include the number of episodes as `numEp`, number of seasons as `numSe`, and name of each series as `title`. Your answer should be in a data frame called `longRun`
+
+```{r, error=TRUE}
+
+```
+
+
+## Has the number of movies in the horror genre changed over time? 
+
+Plot the overall number of movies in each year over time. Be sure to make your plot relative to the number movies produced each year.
+
+```{r, error=TRUE}
+
+```
+
+
+##  Who are the actors that have been in the most movies? 
+
+List the top 20 actors with their names and the count of movies. 
+Store this information in the data frame called `top20` with  the actor's name in `name` and the count in `numM`. 
+
+```{r, error=TRUE}
+
+```
+
+
+## Challenge Networks
+
+Pick a (lead) actor who has been in at least 20 movies. Find all of the other actors that have appeared in a movie with that person. For each of these, find all the people they have appeared in a move with him/her. 
+
+Use this to create a network/graph of who has appeared with who. Use the `igraph` or `statnet` packages to display this network. 
+
+Try doing this with individual SQL commands and the process the results in R to generate new SQL queries. In other words, don't spend too much time trying to create clever SQL queries as there is a more direct way to do this in R.
+
+
+```{r, error=TRUE}
+
+```
+
