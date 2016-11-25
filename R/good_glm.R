@@ -64,12 +64,24 @@ verdict
 library(tidyr)
 (tb1 <- spread(data = verdict,key = verdict,value = freq))
 
+#Pearson's Chi-squared Test for Count Data
+summary(xtabs(freq~fault+verdict,data=verdict))
+summary(xtabs(freq~moral_character+verdict,data=verdict))
+
+
 #model
 m2 <- glm(freq ~ (fault * moral_character) * verdict, family = poisson,data = verdict)
 summary(m2)
 
+
+
 drop1(m2, test = "Chisq")
-#
+
+#Predicted frequencies with CIs
 (m2.lsm <- lsmeans(m2, ~(fault * moral_character) * verdict, type = "response"))
 plot(m2.lsm)
 
+
+#
+
+(m2.lsm <- lsmeans(m2, ~fault  * verdict, type = "response"))
