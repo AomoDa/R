@@ -1,7 +1,7 @@
 ---
 title: "2016 Presidential Election Debrief Project"
 output: html_document
-arthur: Shengyao Yang, Shuaya Zhan, Zhaoye Tang, Xinyi Luan, Yike Dong
+arthur: 
 ---
 
 ## DATA WRANGLING
