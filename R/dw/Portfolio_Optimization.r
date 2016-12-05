@@ -190,3 +190,7 @@ legend('topleft',
 
 #q10
 
+get_sr_portfolio(x,
+ 	ret_asset1 = data.test$rate.spy[-1],
+ 	ret_asset2 = data.test$rate.tlt[-1],
+ 	fft = (data.test$fed.rate.deci)[-43]) 
