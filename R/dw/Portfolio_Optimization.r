@@ -138,6 +138,7 @@ optimize(curve_exp,interval = c(0,1),maximum = T)
 
 
 
+
 #q9
 
 #order test data
@@ -150,36 +151,40 @@ data.test$rate.spy <- NA
 data.test$rate.tlt <- NA
 data.test$rate.spy[-1] <- diff(data.test$close.spy,lag = 1) / data.test$close.spy[-nrow(data.test)]
 data.test$rate.tlt[-1] <- diff(data.test$close.tlt,lag = 1) / data.test$close.tlt[-nrow(data.test)]
-
+x=0.59046
+data.test$rate.portfolio <- x * data.test$rate.spy + (1-x) * data.test$rate.tlt
 
 ##compute excess returns
 
+
+
 e_spy_test <- data.test$rate.spy[-1] - (data.test$fed.rate.deci[-nrow(data.test)]) / 52
 e_tlt_test <- data.test$rate.tlt[-1] - (data.test$fed.rate.deci[-nrow(data.test)]) / 52
-e_fft_test <- data.test$fed.rate.deci[-nrow(data.test)] / 52
+e_portfolio_test <- data.test$rate.portfolio[-1] - (data.test$fed.rate.deci[-nrow(data.test)]) / 52
 
 g_spy_test <- numeric()
 g_tlt_test <- numeric()
-g_fft_test <- numeric()
+g_portfolio_test <- numeric()
 
 g_spy_test[1] <- 100
 g_tlt_test[1] <- 100
-g_fft_test[1] <- 100
+g_portfolio_test[1] <- 100
 for (i in 2:(nrow(data.test)-1)) {
     g_spy_test[i] <- g_spy_test[i-1]*(1+e_spy_test[i])
     g_tlt_test[i] <- g_tlt_test[i-1]*(1+e_tlt_test[i])
-    g_fft_test[i] <- g_fft_test[i-1]*(1+e_fft_test[i])
+    g_portfolio_test[i] <- g_portfolio_test[i-1]*(1+e_portfolio_test[i])
 }
 
 ## plot 
 
 plot(g_spy_test,type='l',col='red',main='',ylim=c(95,120))
 points(g_tlt_test,type='l',col='blue',lty=2)
-points(g_fft_test,type='l',col='orange',lty=3)
+points(g_portfolio_test,type='l',col='orange',lty=3)
+abline(h=100,lty=2,lwd=1,col=gray(0.5))
 legend('topleft',
 	   col=c('red','blue','orange'),
 	   lty=1:3,
-	   legend=c('spy','tlt','fft'),
+	   legend=c('spy','tlt','portfolio'),
 	   cex=0.6
 	   )
 
