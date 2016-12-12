@@ -1,5 +1,5 @@
 ---
-title: "STAT6083 Generalised Linear Models"
+title: "GLM"
 output: word_document
 ---
 
