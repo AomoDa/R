@@ -6,15 +6,17 @@ euc <- function(x1,x2,y1,y2){
 	return(dis)
 }
 
+
 # global tour 
 tour <- function(tour_coordinate){
 	tour_coordinate <- as.data.frame(tour_coordinate)
     rn <- nrow(tour_coordinate)
     tour_coordinate$x2 <- c(tour_coordinate$x1[rn],tour_coordinate$x1[-rn])
     tour_coordinate$y2 <- c(tour_coordinate$y1[rn],tour_coordinate$y1[-rn])
-    g_tour <- apply(tour_coordinate,MARGIN = 1,function(x)euc(x[1],x[3],x[2],x[4]))
+    g_tour <- apply(tour_coordinate[,-1],MARGIN = 1,function(x)euc(x[1],x[3],x[2],x[4]))
     return(sum(g_tour))
 }
+
 
 
 #travel change
@@ -35,7 +37,7 @@ travel_change <- function(old_tour_coordinate){
 # init_T 初始温度
 # rate 降温速率 [0-1]
 
-aap <- function(delta,init_T=1e5,rate=0.9,times=1){
+aap <- function(delta,init_T=1e5,rate=0.99,times=0){
     T <- init_T*rate^times
 	prob <- exp(-delta / T)
 	reject <- 1 - prob
@@ -46,7 +48,7 @@ aap <- function(delta,init_T=1e5,rate=0.9,times=1){
 
 # Traveling Salesman
 
-tsp_tour <- function(city_coordinate,loop_times=2e4 ){
+tsp_tour <- function(city_coordinate,loop_times=1e4 ){
  city_coordinate <- as.data.frame(city_coordinate)
  init_dis <- tour(tour_coordinate=city_coordinate)
  #Initialization
@@ -57,7 +59,6 @@ tsp_tour <- function(city_coordinate,loop_times=2e4 ){
  new_travel <- travel_change(travel_coordinate)
  new_dis <- tour(new_travel)
  diff_dis <- new_dis - old_dis
-
  if(diff_dis <=0){
  	travel_coordinate <- new_travel
  	old_dis <- new_dis
@@ -82,16 +83,18 @@ tsp_tour <- function(city_coordinate,loop_times=2e4 ){
 
 
 
-#Qinit_T=10000
 
 
+#------------------------------------------------------
+#Q1
 sample_data <- data.frame(id=1:100,x1=as.vector(sapply(1:10,function(x)rep(x,10))) ,y1=1:10)
 #solution
-tsp_tour(sample_data)
+set.seed(100)
+tsp_tour(city_coordinate=sample_data,loop_times=10000)
 
 
 
-
+#------------------------------------------------------
 #Q2
 # x,y coordinates of 100 cities in [0,100]^2
 X <- c(
@@ -108,8 +111,9 @@ Y <- c(
   2.84, 96.70, 77.40, 77.52, 83.08, 20.63, 64.58, 83.80, 55.40, 12.18, 11.27, 70.16, 67.60, 45.33, 92.50, 59.50, 49.87, 68.56,  6.44, 96.95, 68.14, 99.79, 28.05,
  45.24, 79.19, 37.63, 80.05,  6.20, 62.56, 43.35, 32.76
  )
-
 city <- data.frame(id=1:100,x1=X,y1=Y)
+plot(city[,-1])
 
 #solution
-tsp_tour(city)
+set.seed(8888)
+tsp_tour(city_coordinate=city,loop_times=10000)
