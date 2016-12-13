@@ -14,7 +14,7 @@ library(ggplot2)
 library(psych)
 library(car)
 library(effects)
-x <- read.csv('C://Users//AomoDa//Documents//MMRCountry.csv',
+x <- read.csv('C://Users//mali//Documents//MMRCountry.csv',
               header = T,
               stringsAsFactors = F,
               na.strings = -99)
@@ -47,7 +47,7 @@ Max |1100.0|115377|87.00
 
 
 
-```{r}
+```{r, echo=FALSE, message=FALSE, warning=FALSE}
 pairs.panels(x[,c(-1,-4)],method = 'pearson')
 ggplot(data=x,aes(x=TFR.level,fill=TFR.level))+
   geom_bar(show.legend = F)+
@@ -61,8 +61,8 @@ ggplot(data=x,aes(x=TFR.level,fill=TFR.level))+
 
 
 - $R_{adj}=0.1443$,the adjusted rsquared is very small, which means that the model fitting is very bad.
-- The residual error of the model seems to be dissatisfied with the normal distribution,which does not accord with the basic assumptions of linear regression.
-- There is some connection between the residuals of the model and the fitted value, which does not accord with the basic assumptions of linear regression.
+- [p1] The residual error of the model seems to be dissatisfied with the normal distribution,which does not accord with the basic assumptions of linear regression.
+- [p2] There is some connection between the residuals of the model and the fitted value, which does not accord with the basic assumptions of linear regression.
 -This model is not appropriate for describing the relationship between `MMR` and `GDP`
 
 -----
@@ -82,41 +82,69 @@ ggplot(data=x,aes(x=GDP,y=MMR))+
   geom_smooth(method = 'lm',na.rm = T,col=I('red'))+
   labs(title='MMR vs GDP')
 lm1 <- lm(MMR~GDP,data=x)
-qqPlot(lm1)
-residualPlots(lm1)
+qqPlot(lm1,main='p1:Q-Q norm plot of residual of lm1')
+residualPlots(lm1,main='p2:residualPlots of lm1')
 ```
 
 ###b
 
-- Use forward stepwire regression algorithm to fit better model $lm2$,which is `lm(formula = MMR ~ GDP + LifeExpBW, data = x)` .But I find `GDP` in $lm2$ is not statistically significant at 0.05 level.
-- And then I dorp ``GDP` to fit model $lm3$,which is `lm(formula = MMR ~ LifeExpBW, data = x)`. And I find all variables are statistically significant at 0.05 level.
-- The pvalue of F-test of two model is 0.1265,which means $lm3$ is better.
-- The coefficients of `LifeExpBW` in `lm3` is -18.64,which means  `MMR` will be reduced by 18.64 with `LifeExpBW` per 1 increase.
-- The coefficients of Intercept in `lm3` is 1510.23,which means  `MMR` will be 1510.23 when $LifeExpBW=0$.
-- $R_{adj}=0.7316$,which is far greater than model `lm1`.
-- The residual error of the model `lm3` seems to be dissatisfied with the normal distribution,which does not accord with the basic assumptions of linear regression.
-- There is some connection between the residuals of the model `lm3` and the fitted value, which does not accord with the basic assumptions of linear regression.
 
+- First my model is `MMR ~ GDP`.
+- Then use forward regression algorithm to select best model.When adding `LifeExpBW`,the AIC of new model is 1722.7,which is  the least.And I get new model `MMR ~ GDP + LifeExpBW`.
+- Thirdly,when adding `GDP:LifeExpBW`,the AIC of new model is 1704.9,which is  the least.And I get new model `MMR ~ GDP + LifeExpBW + GDP:LifeExpBW`.
+- Finally,when adding any other items,the AIC of new model will be larger.So,we get my new model is
 
+$$MMR= 1666.38 - 0.03 \cdot GDP - 20.83 \cdot LifeExpBW +0.00037268 \cdot GDP \cdot LifeExpBW $$.
 
-The equation of the new model is 
-$$MMR=1510.23 -18.64 \cdot LifeExpBW$$
+- the coefficients of intercept is 1666.38,which means MMR would be 1666.38 when GDP and LifeExpBW are 0.
+- $R_{adj}=0.7598$,which indicated that my model is better than $lm1$.
+- [p3]The residual error of the model seems to be dissatisfied with the normal distribution,which does not accord with the basic assumptions of linear regression.
+- [p4]There is not a  connection between the residuals of the model and the fitted value, which  accords with the basic assumptions of linear regression.
 
-
-Analysis of Variance Table
-
-``Model 1: MMR ~ GDP + LifeExpBW``
-
-``Model 2: MMR ~ LifeExpBW``
-
-------
-
-Model|Res.Df| RSS| Df |Sum of Sq  |F |Pvalue
------|-----|-----|-----|----------|------|----
-1  |  178| 2380466  |                         
-2  |  179 |2411994| -1 | -31528| 2.3575 |0.1265
 
 -----
+
+Item| Estimate |Std. Error |t value|Pvalue
+-----|----------|---------|--------|-------    
+(Intercept) ||   1.666e+03 | 6.861e+01|  24.289 | 0
+GDP        |   -2.960e-02 | 6.732e-03 | -4.396 |0 
+LifeExpBW  |   -2.083e+01 | 9.770e-01| -21.320 | 0 
+GDP:LifeExpBW | 3.727e-04 | 8.241e-05 |  4.522 |0 
+
+-----
+
+
+
+
+
+Forward regression algorithm Trace:
+
+```
+Start:  AIC=1932.88
+MMR ~ GDP
+
+            Df Sum of Sq     RSS    AIC
++ LifeExpBW  1   5308280 2380466 1722.7
++ TFR.level  2   2944036 4744710 1849.5
+<none>                   7688746 1932.9
+
+Step:  AIC=1722.66
+MMR ~ GDP + LifeExpBW
+
+                Df Sum of Sq     RSS    AIC
++ LifeExpBW:GDP  1    246543 2133924 1704.9
+<none>                       2380466 1722.7
++ TFR.level      2     45660 2334806 1723.2
+
+Step:  AIC=1704.87
+MMR ~ GDP + LifeExpBW + GDP:LifeExpBW
+
+            Df Sum of Sq     RSS    AIC
+<none>                   2133924 1704.9
++ TFR.level  2     21302 2112622 1707.0
+
+
+```
 
 
 
@@ -124,35 +152,30 @@ Model|Res.Df| RSS| Df |Sum of Sq  |F |Pvalue
 ```{r, include=FALSE}
 lm2<- step(lm1,
            scope = list(
-             upper = ~LifeExpBW+TFR.level+GDP
+             upper = ~LifeExpBW*TFR.level*GDP
              ),
            direction = 'forward')
 ```
 
 ```{r, echo=FALSE, warning=FALSE}
-lm3 <- lm(MMR~LifeExpBW,data=x)
-ggplot(data=x,aes(x=LifeExpBW,y=MMR))+
-  geom_point(na.rm = T)+
-  geom_smooth(method = 'lm',na.rm = T,col=I('orange'))+
-  labs(title='MMR vs LifeExpBW')
 #diagnostic
-qqPlot(lm3)
-residualPlots(lm3)
+qqPlot(lm2,main='p3:Q-Q norm plot of residual of lm2')
+residualPlots(lm2,main='p4:residualPlots of lm2')
 ```
 
 
 ##c
 
 - When adding TFR.level to the model `lm3`,coefficients  of the model will not be statistically significant at 0.05 level. 
--The effect plot with different levels of TFR, controlling by GDP tell us there seems to be no relationship between `MMR` and `TFR.level`.
+-[p5]The effect plot with different levels of TFR, controlling by GDP tell us there seems to be no relationship between `MMR` and `TFR.level`.
 - Finally, I do not  decide adding TFR.level to my model.
 
 
-```{r}
-lm4 <- lm(formula = MMR ~ TFR.level:LifeExpBW+GDP, 
-          data = x)
+```{r, echo=FALSE}
+lm4 <- lm(formula = MMR ~ GDP + LifeExpBW + GDP:LifeExpBW+TFR.level:LifeExpBW, data = x)
 plot(Effect(focal.predictors = c('TFR.level','LifeExpBW'),
-            mod = lm4))
+            mod = lm4),
+     main='p5:differences in MMR for \n countries with different levels of TFR \n controlling by GDP')
 ```
 
 
@@ -161,7 +184,7 @@ plot(Effect(focal.predictors = c('TFR.level','LifeExpBW'),
 
 I use smooth spline with $df=3,8,12,16$ to fit `MMR` and `LifeExpBW`.With the increase of $DF$, the fitting degree of `MMR` and `LifeExpBW` is getting better and better. From the graph, we can see an intuitive curve, so that I think that the linear relationship between`MMR` and `LifeExpBW` is relatively weak.
 
-```{r}
+```{r, echo=FALSE}
 par(mfrow=c(2,2))
 plot(smooth.spline(x = x$LifeExpBW,y=x$MMR,df = 3),type='l',main='smoothing splines with df=3',xlab='LifeExpBW',ylab='MMR',col='red',lty=1,lwd=2)
 points(x = x$LifeExpBW,y=x$MMR)
@@ -250,21 +273,15 @@ qqPlot(lm1)
 residualPlots(lm1)
 ##b
 lm2<- step(lm1,
-           scope = list(upper = ~LifeExpBW+TFR.level+GDP),
+           scope = list(
+             upper = ~LifeExpBW*TFR.level*GDP
+             ),
            direction = 'forward')
-summary(lm2)
-lm3 <- lm(MMR~LifeExpBW,data=x)
-summary(lm3)
-anova(lm2,lm3)
-ggplot(data=x,
-       aes(x=LifeExpBW,y=MMR))+
-  geom_point(na.rm = T)+
-  geom_smooth(method = 'lm',na.rm = T,col=I('orange'))
 #diagnostic
-qqPlot(lm3)
-residualPlots(lm3)
+qqPlot(lm2)
+residualPlots(lm2)
 ##c
-lm4 <- lm(formula = MMR ~ TFR.level:LifeExpBW+GDP, data = x)
+lm4 <- lm(formula = MMR ~ GDP + LifeExpBW + GDP:LifeExpBW+TFR.level:LifeExpBW, data = x)
 plot(Effect(focal.predictors = c('TFR.level','LifeExpBW'),
             mod = lm4))
 summary(lm4)
