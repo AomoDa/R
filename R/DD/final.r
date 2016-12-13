@@ -1,5 +1,6 @@
 
 
+
 #Q2
 ##a
 set.seed(200)
@@ -53,6 +54,8 @@ round(var(abs(x)),2)
 
 
 #q5
+library(ggplot2)
+library(plyr)
 
 load('final2016.RData')
 duration <- Q2_16$duration
@@ -67,5 +70,75 @@ for (i in sizes) {
 	rt <- rbind(rt,data.frame(size=i,bias=a))
 }
 
+ggplot(data=rt,aes(x=as.factor(size),y=bias,fill=as.factor(size)))+
+   geom_boxplot(show.legend=F)+
+   labs(x='size',title='boxplot')++lims(y=c(-10,15))
+
 ddply(.data = rt,.variables = .(size),
-	.fun = summarise,bias_mean=mean(bias),bias_upp=quantile(bias,0.975),bias_low=quantile(bias,0.025))
+	.fun = summarise,bias_mean=round(mean(bias),2),
+	bias_upp=round(quantile(bias,0.975),2),
+	bias_low=round(quantile(bias,0.025),2))
+
+
+#Q6
+day_of_week <- Q2_16$day.of.week
+aggregate(duration~day_of_week,FUN = mean)
+
+
+#PERMUTATION TESTS
+#H0: U_E > U_W
+#H1: U_E <= U_W
+
+N <- 1e3-1
+result <-c()
+len <- length(duration)
+set.seed(600)
+for (i in 1:N) {
+   ind <- sample(len,size=248322,replace=F)
+   result[i] <- mean(duration[ind]) - mean(duration[-ind])
+}
+observed <- 26.35046-18.24986
+(sum(result <= observed) + 1)/(N + 1)
+
+
+
+
+
+ggplot(data=Q2_16,aes(x=duration,y=..density..,fill=day.of.week))+
+     geom_histogram(bins = 50,col=I('white'),show.legend = F)+
+     lims(x=c(1,100))+facet_wrap(~day.of.week)
+
+
+#F test to compare two variances
+var.test(duration~day_of_week)
+#Welch Two Sample t-test
+library(gplots)
+
+t.test(duration~day_of_week,var.equal=F,alternative='less')
+
+
+#Q7
+
+
+duration_reg <- subset(Q2_16,subset =account=='Registered',select = duration,drop = T)
+duration_cas <- subset(Q2_16,subset =account=='Casual',select = duration,drop = T)
+
+
+set.seed(700)
+
+N_size <- seq(from=100,to = 1000,by = 10)
+
+
+for (i in N_size) {
+	a <- data.frame(low=numeric(),upp=numeric())
+	for (j in 1:1000) {
+    diff_mean<- replicate(1000,mean(sample(duration_cas,size=i))-mean(sample(duration_reg,size=i)))
+    a[j,1] <- quantile(diff_mean,0.025)
+    a[j,2] <- quantile(diff_mean,0.975)
+   }
+
+}
+
+
+
+#Bonus question
