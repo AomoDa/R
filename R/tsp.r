@@ -12,7 +12,7 @@ tour <- function(tour_coordinate){
     rn <- nrow(tour_coordinate)
     tour_coordinate$x2 <- c(tour_coordinate$x1[rn],tour_coordinate$x1[-rn])
     tour_coordinate$y2 <- c(tour_coordinate$y1[rn],tour_coordinate$y1[-rn])
-    g_tour <- apply(tour_coordinate,MARGIN = 1,function(x)euc(x[1],x[3],x[2],x[4]))
+    g_tour <- apply(tour_coordinate[,2],MARGIN = 1,function(x)euc(x[1],x[3],x[2],x[4]))
     return(sum(g_tour))
 }
 
