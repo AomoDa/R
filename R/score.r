@@ -47,7 +47,7 @@ table(x$是否预警)
 ##------------------------------------------
 ggplot(data=x,aes(x=学年,y=绩点,fill=学年))+geom_boxplot(na.rm = T,show.legend = F)
 
-ggplot(data=x,aes(x=学年,fill=是否预警))+
+ggplot(data=x,aes(x=学年,fill=as.factor(是否预警))) +
       geom_bar(na.rm = T,show.legend = T,position = 'fill')+
       coord_polar(theta = "y") + 
       labs(x='',y='百分比',title='预警与学年')
@@ -63,7 +63,7 @@ mosaicplot(table(x$学年,x$是否预警),shade=T,main='马赛克图 \n 预警�
 ##------------------------------------------
 ggplot(data=x,aes(x=课程性质,y=绩点,fill=课程性质))+geom_boxplot(na.rm = T,show.legend = F)
 
-ggplot(data=x,aes(x=课程性质,fill=是否预警))+
+ggplot(data=x,aes(x=课程性质,fill=as.factor(是否预警)))+
       geom_bar(na.rm = T,show.legend = T,position = 'fill')+
       coord_polar(theta = "y") + 
       labs(x='',y='百分比',title='预警与课程性质')
@@ -84,14 +84,14 @@ ggplot(data=x,aes(x=平时成绩,y=绩点,col=是否预警))+
    geom_point(na.rm = T)+
    labs(x='平时成绩',y='绩点',title='散点图\n预警与平时成绩')
 
-ggplot(data = x,aes(x=是否预警,fill=是否预警,y=平时成绩))+
+ggplot(data = x,aes(x=是否预警,fill=as.factor(是否预警),y=平时成绩))+
   geom_boxplot(na.rm = T) +
   labs(x='是否预警',y='平时成绩',title='箱图\n预警与平时成绩')
 
 #---------
 
 ##### 加入学年因素
-ggplot(data=x,aes(x=平时成绩,y=绩点,col=是否预警))+
+ggplot(data=x,aes(x=平时成绩,y=绩点,col=as.factor(是否预警)))+
    geom_point(na.rm = T)+
     facet_wrap(~学年)+
    labs(x='平时成绩',y='绩点',title='散点图\n预警与平时成绩')
@@ -99,7 +99,7 @@ ggplot(data=x,aes(x=平时成绩,y=绩点,col=是否预警))+
 
 ##### 加入课程性质因素
 
-ggplot(data = x,aes(fill=是否预警,x=课程性质,y=平时成绩))+
+ggplot(data = x,aes(fill=as.factor(是否预警),x=课程性质,y=平时成绩))+
   geom_boxplot(na.rm = T) +
   labs(x='是否预警',y='平时成绩',title='箱图\n预警与平时成绩')
 
@@ -167,4 +167,4 @@ table(ifelse(rt_pred>0.5,1,0),test_data$是否预警)
 # ROC曲线
 pred <- prediction(rt_pred,test_data$是否预警)
 perf <- performance(pred,"tpr","fpr")
-plot(perf,colorize = T,main='ROC曲线图\n逻辑回归')
+plot(perf,colorize = T,main='ROC曲线图\n决策树')
