@@ -79,10 +79,11 @@ location '/tmp/reyuntrack/warehouse/track/tkio.db/tkio_med_dau_cross_day'
 
 --------------------------------------------------------------
 
---- select next_day(date_sub('2017-02-13',7), 'MO');
 
 insert overwrite table tkio.tkio_med_dau_detail_week partition(ds,appid)
 
+select * from 
+(
 select xwho,
        min(next_day(date_sub(week_start_ds,7), 'MO')) over(partition by xwho) as first_week_ds,
        min(week_num) over(partition by xwho) as first_week_num,
@@ -103,6 +104,9 @@ from
     group by xwho,weekofyear(ds)
 
 ) as tt
+) as x where dau_diff_week <=8
+
+
 
 
 
@@ -133,11 +137,12 @@ location '/tmp/reyuntrack/warehouse/track/tkio.db/tkio_med_dau_detail_week'
 
 insert overwrite table tkio.tkio_med_dau_detail_month partition(ds,appid)
 
+select * from (
 select xwho,
-       min(mon_start_ds) over(partition by xwho) as first_week_ds,
+       min(mon_start_ds) over(partition by xwho) as first_month_ds,
        min(mon_num) over(partition by xwho) as first_month_num,
        first_value(mon_dau) over(partition by xwho order by mon_num ROWS between UNBOUNDED PRECEDING and UNBOUNDED FOLLOWING) as first_month_segments,
-       mon_num - min(mon_num) over(partition by xwho)  as dau_diff_month,
+       months_between(mon_start_ds,min(mon_start_ds) over(partition by xwho) )  as dau_diff_month,
        mon_dau as month_dau_segments,
        mon_num,
        mon_start_ds,
@@ -153,6 +158,7 @@ from
     group by xwho,month(ds),concat(substr(ds,0,8),'01') 
 
 ) as tt
+) as x where dau_diff_month <=3
 
 
 
@@ -177,3 +183,74 @@ location '/tmp/reyuntrack/warehouse/track/tkio.db/tkio_med_dau_detail_month'
 
 
 
+-----
+
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+insert overwrite table tkio.tkio_med_dau_cross_week partition(ds,appid)
+select xwho,
+       dau_week_ds as  dau_ds_base,
+       datediff(ds,dau_week_ds)/7 as dau_diff_week,
+       ds,
+       'bfa099f35fb3b8158846a24e7066ca34' as appid
+from 
+(select xwho,
+        ds,
+        collect_list(ds) over(partition by xwho order by ds ROWS between 8 PRECEDING  and CURRENT ROW ) as dau_week_array
+  from tkio.tkio_med_dau_detail_week
+  where ds between '2016-12-01' and '2017-02-01' and 
+        appid='bfa099f35fb3b8158846a24e7066ca34'
+) as t1 lateral view explode(t1.dau_week_array) lat_view as dau_week_ds
+
+
+use tkio;
+create EXTERNAL table tkio_med_dau_cross_week(
+xwho string,
+dau_ds_base string,
+dau_diff_week int
+)
+PARTITIONED BY ( 
+ds string, 
+appid string)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY '\t'
+STORED AS ORC
+location '/tmp/reyuntrack/warehouse/track/tkio.db/tkio_med_dau_cross_week'
+;
+
+-----
+
+
+set hive.exec.dynamic.partition.mode=nonstrict;
+
+insert overwrite table tkio.tkio_med_dau_cross_month partition(ds,appid)
+select xwho,
+       dau_week_ds as  dau_ds_base,
+       months_between(ds,dau_week_ds) as dau_diff_month,
+       ds,
+       'bfa099f35fb3b8158846a24e7066ca34' as appid
+from 
+(select xwho,
+        ds,
+        collect_list(ds) over(partition by xwho order by ds ROWS between 3 PRECEDING  and CURRENT ROW ) as dau_month_array
+  from tkio.tkio_med_dau_detail_month
+  where ds between '2016-12-01' and '2017-02-01' and 
+        appid='bfa099f35fb3b8158846a24e7066ca34'
+) as t1 lateral view explode(t1.dau_month_array) lat_view as dau_week_ds
+
+
+use tkio;
+create EXTERNAL table tkio_med_dau_cross_month(
+xwho string,
+dau_ds_base string,
+dau_diff_month int
+)
+PARTITIONED BY ( 
+ds string, 
+appid string)
+ROW FORMAT DELIMITED 
+FIELDS TERMINATED BY '\t'
+STORED AS ORC
+location '/tmp/reyuntrack/warehouse/track/tkio.db/tkio_med_dau_cross_month'
+;
