@@ -17,12 +17,12 @@ ploysolve <- function(a,lower,upper,tol=1e-6){
  if(hl*hu <= 0){
  	hm <- Inf
  	while( abs(hm) >=tol & abs(lower-upper)>= tol ){
- 		hl <- h(x=lower)
+ 		     hl <- h(x=lower)
         hu <- h(x=upper)
- 		m <- lower - ((upper-lower)*hl)/(hu-hl)
- 		hm <- h(x=m)
- 		if(hm*hl < 0 ){upper <- m }
- 		if(hm*hl >= 0 ){lower <- m}
+ 		     m <- lower - ((upper-lower)*hl)/(hu-hl)
+ 		     hm <- h(x=m)
+ 		     if(hm*hl < 0 ){upper <- m }
+ 		     if(hm*hl >= 0 ){lower <- m}
  	}
  	# return
  	if(abs(hm)<tol){
