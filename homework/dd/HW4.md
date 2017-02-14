@@ -1,8 +1,10 @@
 ---
 title: "Untitled"
 author: "Your Name"
-date: "2017年2月12日"
-output: html_document
+date: '2017-02-12'
+output:
+  word_document: 
+    toc: yes
 ---
 
 ```{r setup, include=FALSE}
@@ -50,7 +52,7 @@ pairs.panels(Weekly)
 ###b
 
 
-`Lag2` appears to be statistically significant at 0.05 level.
+`Lag2` appears to be statistically significant at 0.05 level,which means that there is a clear evidence of a real association between `Lag2` and `Direction`.The  coefficient for `Lag2` is 0.05844 ,which is psotive and suggests that if the market had a positive return last week, then it is greater  likely to go up this week.
 
 -----
 
@@ -75,6 +77,11 @@ summary(glm1)
 
 ###c
 
+The diagonal elements of the confusion matrix indicate correct predictions, while the off-diagonals represent incorrect predictions. Hence our model correctly predicted that the our data in 1089 weeks would go up on 557 weeks and that it would go down on 54 weeks, for a total of $557 + 54 = 611$ correct predictions.In this case,  the accuracy rate of my  logistic regression is $611/1089=56.1\%$.
+
+At first glance, it appears that the logistic regression model is working a little better than random guessing. However, this result is misleading because we trained and tested the model on the same set of 1089 observations.
+In other words, $100\%− 56.1\% = 43.9\%$ is the training error rate. As we have seen previously, the training error rate is often overly optimistic—it tends to underestimate the test error rate. In order to better assess the accuracy
+of the logistic regression model in this setting, we can fit the model using part of the data, and then examine how well it predicts the held out data.
 
 
 
@@ -97,6 +104,7 @@ table(glm.pred,Weekly$Direction)
 
 ###d
 
+The accuracy rate of my  logistic regression  in test data set is $(9+56)/104=62.5\%$.
 
 -----
 
@@ -123,12 +131,14 @@ table(glm2.pred,test.data$Direction)
 
 ##Q13
 
+- Train data set has 361 samples,about 70% of all samples.
+- Test data set has 145 samples ,about 30% of all samples.
+
 ```{r, message=FALSE, warning=FALSE}
 library(MASS)
 library(ROCR)
 data("Boston")
 str(Boston)
-
 crim.med <- median(Boston$crim)
 #crime rate above or below the median
 Boston$crim.result <- ifelse(Boston$crim>crim.med,1,0)
@@ -141,6 +151,19 @@ Boston.test <- Boston[ind==2,-1]
 ```
 
 ### logistic regression
+
+
+-----
+
+Models|algorithm|Predictors| test error rate 
+------|-----------|---------|------------------
+glm3|logistic regression|all predictors|12.41%
+glm4|logistic regression with backward stepwise Algorithm|zn,indus,indus,nox,dis,rad,tax,ptratio,black,lstat,medv|11.03%
+
+
+-----
+
+
 
 ```{r, message=FALSE, warning=FALSE}
 # logistic regression
@@ -164,6 +187,8 @@ mean(glm4.pred!=Boston.test$crim.result)
 
 ###Linear Discriminant Analysis
 
+The test error rate of test data set is 9.65%,which is less than logistic regression.
+
 ```{r}
 
 lda1 <- lda(crim.result ~ . , data = Boston.train)
@@ -178,6 +203,17 @@ mean(lda1.prob$class!=Boston.test$crim.result)
 
 
 ###k-Nearest Neighbour Classification
+
+-----
+
+Models|algorithm|K| test error rate 
+------|-----------|---------|------------------
+knn1|KNN|1|6.21%
+knn3|KNN|3|7.59%
+knn5|KNN|5|8.97%
+knn10|KNN|10|13.1%
+
+-----
 
 ```{r, message=FALSE, warning=FALSE}
 # K=1
