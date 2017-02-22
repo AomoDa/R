@@ -1,8 +1,11 @@
 ---
 title: "hw5"
 author: "Your Name"
-date: "2017-02-21"
-output: html_document
+date: '2017-02-21'
+output:
+  word_document: 
+    toc: yes
+  html_document: default
 ---
 
 ```{r setup, include=FALSE}
@@ -13,7 +16,9 @@ knitr::opts_chunk$set(echo = TRUE)
 
 #Q1 FeedFoward
 
+
 ##a
+
 
 ##b
 
@@ -24,8 +29,12 @@ input features is  $$h_1=f(x1,x2)=1.27+0.26x_1-0.34x_2$$
 
 The expression for the value at the output node as a function of the values at the hidden units is
 
-$$z=g(h_1,h_2)$$
+$$z=g(h_1,h_2)=tanh(43.01h_1+1.37h_2-28.67)$$
+##d
 
+The expression for the value at the output node as a function of the input values is 
+
+$$z=F(x_1,x_2)=tanh(43.01 \cdot tanh(1.27+0.26x_1-0.34x_2)+1.37\cdot tanh(-32.11+21.98x_1-48.67x_2)-28.67)$$
 
 #Q2 Scaling
 
