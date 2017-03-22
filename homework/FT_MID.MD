@@ -3,7 +3,7 @@ title: 'mid '
 author: 'Author : Your Name'
 date: '2017-03-19'
 output:
-  word_document: 
+  word_document:
     toc: yes
   html_document:
     toc: yes
@@ -22,7 +22,7 @@ The unadjusted correlation coefficient between final SBP and baseline SBP is **0
 
 ```{r, message=FALSE, warning=FALSE}
 # loading sbp.csv into R
-sbp <- read.csv(file = 'C://Users//AomoDa//Documents//sbp.csv',header = T)	
+sbp <- read.csv(file = 'C://Users//mali//Documents//sbp.csv',header = T)	
 # a
 with(sbp,cor(FinalSBP,BslSBP,method = 'pearson'))
 ```
@@ -245,24 +245,25 @@ predict.lm(object = lm2,newdata = sbp.test,interval = 'pred',level = 0.95)
 ##a
 
 
-- Residual standard error: 4.533.
-- djusted R-squared:  0.2518
-- F-statistic: 5.376 on 3 and 36 DF,  p-value: 0.003666
+- Residual standard error: 4.541.
+- djusted R-squared:  0.2492.
+- F-statistic: 4.237 on 4 and 35 DF,  p-value: 0.00669.
 - the regression coefficients and the p-values corresponding to each variable is follow :
 
 -----
 
 Items| Estimate| Std. Error| t value |P value
------|----------|----------|---------|----------
-Intercept|      -10.9665  |   1.4764 | -7.428| 0
-treat=2|   5.9533  |   1.5345 |  3.880| 0.0004
-site=2 |   1.7236  |   1.9380 |  0.889| 0.3797   
-site=3 |  -0.4357 |    1.7355 | -0.251| 0.8032  
+------|----------|----------|---------|----------
+(Intercept)  |      3.60540 |  15.63617 |  0.231 |0.818983    
+as.factor(treat)2|  5.90549 |   1.53802 |  3.840 |0.000495 
+as.factor(site)2 |  1.94664 |   1.95594 |  0.995| 0.326448    
+as.factor(site)3 | -0.68251  |  1.75842|  -0.388| 0.700265    
+BslSBP       |     -0.09621 |   0.10278 | -0.936| 0.355621  
 
 -----
 
 ```{r}
-lm3 <- lm(change~as.factor(treat)+as.factor(site),data=sbp)
+lm3 <- lm(change~as.factor(treat)+as.factor(site)+BslSBP,data=sbp)
 summary(lm3)
 ```
 
@@ -275,23 +276,25 @@ $H_0: \beta=0$ ,That is there are no effect on SBP with different `SITE`.
 $H_1: \beta \neq 0$ ,That is there are some effect on SBP with `SITE`.
 
 
-For `site=2`,the $t-stat=0.889$ ,$df=40-2=38$and $p-value = 0.3797 > 0.05$,For `site=3`,the $t-stat=-0.251$,$df=40-2=38$ and $p-value = 0.8032 > 0.05$.The p values are  not statistically significant at 0.05 level,which means that we cann't reject the null hypothesis $H_0$, and my conclusion is that there are some effect on SBP with `SITE`.. 
+For `site=2`,the $t-stat=0.995$ ,$df=40-2=38$and $p-value = 0.3264 > 0.05$,For `site=3`,the $t-stat=-0.388$,$df=40-2=38$ and $p-value = 0.7003 > 0.05$.The p values are  not statistically significant at 0.05 level,which means that we cann't reject the null hypothesis $H_0$, and my conclusion is that there are some effect on SBP with `SITE`.. 
 
+For `BslSBP`,the $t-stat=-0.936$ ,$df=40-2=38$and $p-value = 0.3556 > 0.05$.The p values are  not statistically significant at 0.05 level,which means that we cann't reject the null hypothesis $H_0$, and my conclusion is that there are some effect on SBP with `BslSBP`.
 
 ##c
 
 
-$H_0: \beta_{site}=0$ ,That is there are no effect on SBP with different `SITE`.
+$H_0: \beta=0$ ,That is there are no effect on SBP with different `SITE`and `BslSBP`.
 
-$H_1: \beta_{site} \neq 0$ ,That is there are some effect on SBP with `SITE`.
+$H_1: \beta \neq 0$ ,That is there are some effect on SBP with `SITE` and `BslSBP`.
 
 
 -----
 
 Items | Df| Sum Sq |Mean Sq| F value |  P value |
 ------|-----|------|-------|---------|-----------
-treat|  1 | 298.5|  298.55  | 14.53| 0.000521 
-site |  2  | 32.9 |  16.44 |   0.80 |0.457201  
+as.factor(treat) | 1  |298.5 | 298.55|  14.477| 0.0005
+as.factor(site)|   2  | 32.9 |  16.44 |  0.797| 0.4586   
+BslSBP  |    1 |  18.1 |  18.07|   0.876 |0.3556  
 
 -----
 
@@ -305,9 +308,25 @@ summary.aov(lm3)
 
 ##d
 
-$H_0: \beta_{site}=0$ ,that is my linear regression model does not need to join the `site` variable
+$H_0: \beta=0$ ,that is my linear regression model does not need to join the `site` and `BslSBP` variable
 
-$H_1: \beta_{site} \neq 0$.that is my linear regression model  needs to join the `site` variable.
+$H_1: \beta \neq 0$.that is my linear regression model  needs to join the `site` and `BslSBP` variable.
+
+
+Analysis of Variance Table
+
+`Model 1: change ~ as.factor(treat)`
+
+`Model 2: change ~ as.factor(treat) + as.factor(site) + BslSBP`
+
+-----
+
+Model|  Res.Df  |  RSS | Df | Sum of Sq | F  |P value
+-----|----------|------|-----|----------|-----|------
+1 |    38| 772.70 |                          
+2  |   35 |721.76 | 3|    50.948| 0.8235 |0.4898
+
+-----
 
 The p values of `site` are  not statistically significant at 0.05 level,which means that we cann't reject the null hypothesis $H_0$, and my conclusion is that my linear regression model does not need to join the `site` variable.
 
@@ -316,7 +335,7 @@ The p values of `site` are  not statistically significant at 0.05 level,which me
 # "reduced" model.
 lm4 <- lm3 <- lm(change~as.factor(treat),data=sbp)
 # "full"  model.
-lm5 <- lm(change~as.factor(treat)+as.factor(site),data=sbp)
+lm5 <- lm(change~as.factor(treat)+as.factor(site)+BslSBP,data=sbp)
 # partial F test
 anova(lm4,lm5,test='F')
 ```
