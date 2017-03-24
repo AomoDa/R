@@ -66,3 +66,12 @@ mydf <-  images_df[,c(myfeatures,785)]
 mydf$labels <- as.numeric(mydf$label==8)
 
 #a
+x <- model.matrix(labels~.,data=mydf)[,-1]
+y <- as.numeric(mydf$labels)
+m1 <- lm(y~x)
+# fitted values
+lm1.pred <- as.numeric(m1$fitted.values)
+summary(lm1.pred )
+
+#b
+
