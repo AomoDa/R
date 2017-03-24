@@ -13,7 +13,7 @@ ID: Your ID
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#1 Problem
+# 1 Problem
 
 **Topic**: How does the HIV infection rate change around the world?
 
@@ -22,7 +22,7 @@ Two specific questions:
 - How is the distribution of HIV infection  rate around the world.
 - Is there a relationship between HIV infection rate and population growth rate ?
 
-#2 Plan
+# 2 Plan
 
 
 -----
@@ -41,7 +41,7 @@ Column| Short Name| Brief Description
 
 -----
 
-#3 Data
+# 3 Data
 
 
 ```{r}
@@ -65,7 +65,7 @@ head(mydata)
 str(mydata)
 ```
 
-#4 Analysis
+# 4 Analysis
 
 ## Analysis Question 1 
 
@@ -134,7 +134,7 @@ ggplot(data=mydata,
   labs(title='HIV VS PopulationGrowth')
 ```
 
-#5 Conclusion
+# 5 Conclusion
 
 ##5.1 For Question 2 
 
@@ -147,7 +147,7 @@ How is the distribution of HIV infection around the world?
 
 -----
 
-Min| 1st Qu.|Median |Mean| 3rd Qu.|Max.| SD|   NA's 
+Min| 1st Qu.|Median |Mean| 3rd Qu.|Max.| SD|   NA 
 -----|------|-------|----|--------|----|-----|-------
 0.100|   0.200|   0.500 |  2.187|   1.600 | 22.800 | 4.372|    72 
 
@@ -159,16 +159,16 @@ Min| 1st Qu.|Median |Mean| 3rd Qu.|Max.| SD|   NA's
 Is there a relationship between HIV infection rate and population growth rate ?
 
 - The spearman correlation coefficient of `HIV` and `PopulationGrowth` is 0.45,which indicates that HIV infection rate will increase with the increase of population growth rate, and they are positively correlated.
-- In Spearman's rank correlation test,$S=117700$ and $P-value=0 <0.05$,which is not statistically significant at 0.05 level and we cann't rejuct the null hypothesis $H_0$.There a  positively relationship between HIV infection rate and population growth rate.
+- In Spearman s rank correlation test,$S=117700$ and $P-value=0 < 0.05$, which is not statistically significant at 0.05 level and we cannot rejuct the null hypothesis $H_0$.There a  positively relationship between HIV infection rate and population growth rate.
 - The scatter plot  of  `HIV` and `PopulationGrowth` can draw the same conclusion.
 
 
-#6 Critique
+# 6 Critique
 
 In Question 1 ,I want to know how is the distribution of HIV infection around the world.The histogram plot would be useful.I have used R code to create the histogram of HIVE infection rate  and the density plot of HIVE infection rate in the same graph.The  histogram and density plot told  us that the distribution of hive  is skew and  is  seem not  to obey the normal distribution,which Shapiro-Wilk Normality Test also gives us the same conclusion.In Question 2,I want to know whether there is  a relationship between HIV infection rate and population growth rate.The scatter plot tell us that HIV infection rate will increase with the increase of population growth rate.
 
 
-#7Reference
+# 7Reference
 
 1. Bulman, J. S., & Osborn, J. F. (1989). Descriptive statistics. British Dental Journal, 166(2), 51-4.
 2. Kabacoff, R. (2011). R in action. Manning.
