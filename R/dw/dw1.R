@@ -1,5 +1,4 @@
 
-
 #http://www.stat.illinois.edu/courses/stat100/Notes/Chap9.pdf
 
 x <- read.csv('ReferendumResults.csv',header = T,stringsAsFactors = F)
@@ -68,3 +67,13 @@ x <- model.matrix(Leava_Prob~.,data=train_data)[,-1]
 y <- train_data$Leava_Prob
 xx <- cv.glmnet(x,y,alpha=1)
 
+
+#----------------------------------------
+#gam
+#-----------------------------------------
+
+library(mgcv)
+
+gam1 <- gam(Leava_Prob~AreaType+s(RC1)+s(RC2)+s(RC3)+s(RC4)+s(RC5),data = train_data)
+
+summary(gam1)
