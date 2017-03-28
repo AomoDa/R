@@ -17,62 +17,30 @@ mydata$EXCH_Pb[mydata$EXCH_Pb<0] <- NA
 
 #PH
 #"Shapiro-Wilk normality test for power-transformed PH : W:  0.9944 : p-value: 0.4562 : power term: 4.69"
+shapiro.test(mydata$PH^4.69)
 
+#OM.pct
+# log
+shapiro.test(log(mydata$OM.pct))
 
+#Al
+# -0.11
+shapiro.test(mydata$Al^-0.11)
 
+#Ni
+# no
+shapiro.test(mydata$Ni)
+
+#EXCH_K
+shapiro.test(mydata$EXCH_K^0.7)
+
+#EXCH_Pb
+qqPlot(mydata$EXCH_Pb^0.5)
 
 #VERYFINESAND
 #"Shapiro-Wilk normality test for power-transformed VERYFINESAND : W:  0.9928 : p-value: 0.2412 : power term: 0.272"
 
 
-
-
-
-
-qqnorm(x$PH)
-qqline(x$PH)
-
-require(car)
-names.of.cols <- names(mydata)
-
-	par(mfrow=c(3,3))
-for (i in 1:7) {
-	xx <- na.omit(mydata[,i])
-	qqnorm(xx,main=names(mydata)[i])
-    qqline(xx)
-}
-
-
-
-for ( i in c(1:7)){
-print("--------------------------")
-print(paste0("Normality tests for ",names.of.cols[i]," (column ",i,")"))
-xx <- na.omit(mydata[,i])
-if(min(xx,na.rm = T)>0) pt1 <- powerTransform(xx)
-sw0 <- shapiro.test(xx)
-if(min(xx,na.rm = T)>0) sw1 <- shapiro.test((xx)^as.vector(pt1$lambda))
-if(min(xx,na.rm = T)>0) sw2 <- shapiro.test(log10(xx))
-if(min(xx,na.rm = T)>0) sw3 <- shapiro.test(log(xx))
-sw4 <- shapiro.test(sqrt(xx))
-if(min(xx,na.rm = T)>0 &min(1-xx,na.rm = T)>0) sw5 <- shapiro.test( log(xx/(1-xx)) )
-sw6 <- shapiro.test(scale(xx))
-
-print(paste(sw0$method,"for",names.of.cols[i],": W:", round(sw0$statistic,4),
-": p-value:", round(sw0$p.value,4)))
-if(min(xx,na.rm = T)>0) print(paste(sw1$method,"for power-transformed", names.of.cols[i],": W: ", round(sw1$statistic,4),
-": p-value:",round(sw1$p.value,4), ": power term:", round(as.vector(pt1$lambda),3)))
-if(min(xx,na.rm = T)>0) print(paste(sw2$method,"for log10-transformed", names.of.cols[i],": W:", round(sw2$statistic,4),
-": p‐value:", round(sw2$p.value,4)))
-if(min(xx,na.rm = T)>0) print(paste(sw3$method,"for log-transformed", names.of.cols[i],": W:", round(sw3$statistic,4),
-": p‐value:", round(sw3$p.value,4)))
-print(paste(sw4$method,"for sqrt-transformed", names.of.cols[i],": W:", round(sw4$statistic,4),
-": p‐value:", round(sw4$p.value,4)))
-if(min(xx,na.rm = T)>0 &min(1-xx,na.rm = T)>0) print(paste(sw5$method,"for logit-transformed", names.of.cols[i],": W:", round(sw5$statistic,4),
-": p‐value:", round(sw5$p.value,4)))
-print(paste(sw6$method,"for scale-transformed", names.of.cols[i],": W:", round(sw6$statistic,4),
-": p‐value:", round(sw6$p.value,4)))
-
-}
 
 
 
