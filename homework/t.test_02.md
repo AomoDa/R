@@ -41,14 +41,14 @@ round(sd(x$Temp)/sqrt(length(x$Temp)),3)
 ```
 
 
-#QUESTION 3
+# QUESTION 3
 
 **Independent sample T test with two sided** should be used to do this question.
 
 $$H_0: u_{Jan}=u_{Dec}$$
 $$H_0: u_{Jan} \neq u_{Dec}$$
 
-#QUESTION 4
+# QUESTION 4
 
 
 - The $t-stat=-0.381$,$df=118.01$ and $p-value = 0.704 >0.05$.The p value is not  statistically significant at 0.05 level,which indicates that we cann't reject $H_0$ and there is not a difference between the rainfall in January and December.
@@ -60,12 +60,13 @@ rain <-read.csv('C://Users//mali//Documents//rain.csv')
 t.test(rain$Jan,rain$Dec,alternative = 'two.sided')
 ```
 
-#QUESTION 5
+# QUESTION 5
 
 **Independent sample T test with two sided** should be used to do this question.
 
 $$H_0: u_{May}=u_{July}$$
 $$H_0: u_{May} \neq u_{July}$$
+
 - The $t-stat=3.2048$,$df=58.679$ and $p-value = 0.00219 <0.05$.The p value is very  statistically significant at 0.05 level,which indicates that we should reject $H_0$ and the wind spread measurements for May and July is different.
 - The 95 percent confidence interval is $[-1.00675,4.35453]$,which include $0$ and means the wind spread measurements for May and July is different.
 
