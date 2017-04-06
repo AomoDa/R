@@ -132,19 +132,22 @@ summary(gam2)
 anova.gam(gam2,gam3,test = 'Chisq')
 
 
-comp <- function(obj,data,type='g'){
+comp <- function(obj,data,type='lm'){
 	pred <- predict(obj,newdata = data,se.fit = T,type = 'response')
 	real <- data$Leava_Prob
 	rmse <- round(mean( (pred$fit-real)^2),5)
-	sse <- round(sum( (pred$fit-real)^2),5)
+	rss <- round(sum( (pred$fit-real)^2),5)
 	tss <- sum((real-mean(real))^2)
-	ess <- sum((pred$fit-mean(real))^2)
-	r2 <- ess/tss
-	# sigma 这里有问题
-    if(type=='g'){
-    	sigma <- pred$se.fit} else{
-    		sigma <- sqrt( pred$se.fit^2 + pred$fit * (1-pred$fit)/data$NVotes)
+	r2 <- 1-rss/tss
+
+    if(type=='lm'){
+    	sigma <- sqrt(pred$se.fit^2 + pred$residual.scale^2)
+    	} else { 
+            dispersion <- summary(obj)$dispersion
+            p <- pred$fit
+    		sigma <- sqrt( (pred$se.fit^2 + dispersion*  p* (1-p)/data$NVotes) )
     	}
+
     s <- sum( log(sigma) + (real-pred$fit)^2 / (2*sigma^2) )
     return(data.frame(rmse=rmse,sse=sse,r2=r2,s=s))
 }
