@@ -114,6 +114,9 @@ glm2 <- glm(formula = cbind(Leave,NVotes-Leave) ~ AreaType +RegionName + Black +
               L1Quals + L4Quals_plus + Students + Density + C2 + Young_age + 
               Retirement_age, data = t1_data,family=binomial)
 
+glm3 <- glm(formula = Leava_Prob ~ AreaType +RegionName + Black + Yellow + 
+              L1Quals + L4Quals_plus + Students + Density + C2 + Young_age + 
+              Retirement_age, data = t1_data,family=quasibinomial(link='probit'))
 
 #------
 
@@ -125,6 +128,10 @@ gam2 <- gam(formula = Leava_Prob ~ AreaType + RegionName + s(Black,k=3) + s(Yell
 gam3 <- gam(formula = cbind(Leave,NVotes-Leave) ~ AreaType + RegionName + s(Black) + s(Yellow) + 
               s(L1Quals) + s(L4Quals_plus) + s(Students) + s(Density) + s(C2) + s(Young_age) + 
               s(Retirement_age), data = t1_data,family=binomial)
+
+gam4 <- gam(formula = Leava_Prob ~ AreaType + RegionName + s(Black) + s(Yellow) + 
+              s(L1Quals) + s(L4Quals_plus) + s(Students) + s(Density) + s(C2) + s(Young_age) + 
+              s(Retirement_age), data = t1_data,family=quasibinomial(link='probit'))
 
 
 summary(gam3)
@@ -149,7 +156,7 @@ comp <- function(obj,data,type='lm'){
     	}
 
     s <- sum( log(sigma) + (real-pred$fit)^2 / (2*sigma^2) )
-    return(data.frame(rmse=rmse,sse=sse,r2=r2,s=s))
+    return(data.frame(rmse=rmse,rss=rss,r2=r2,s=s))
 }
 
 comp(gam2,t2_data)
@@ -157,3 +164,12 @@ comp(gam2,t2_data)
 
 ggplot(data=train_data,aes(x=Retirement_age,y=Leava_Prob,col=RegionName))+geom_point()+
     geom_smooth(se=F,method = 'gam',formula = y ~ s(x))
+
+
+
+
+
+
+
+
+
