@@ -12,9 +12,9 @@ output:
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#Q4
+# Q4
 
-##a
+## a
 
 - When $X_1>1$,then $Y=5$.
 - When $X_1<1$ and $X_2>1$,then $Y=15$.
@@ -22,7 +22,7 @@ knitr::opts_chunk$set(echo = TRUE)
 - When $0<X_1<1$ and $X_2<0$,then $Y=10$.
 - When $0<X_1<1$ and $0<X_2<1$,then $Y=0$.
 
-##b
+## b
 
 ```{r}
 par(xpd = NA)
@@ -44,7 +44,7 @@ text(x = 1, y = 1.5, labels = c(0.21),col='red' )
 ```
 
 
-#Q7
+# Q7
 
 - It is reduced by adding more trees to the model and when  ntree is more than 100 the test error  is stationary trend.
 - When $mtry=\sqrt p$,random Forest is best which has lowest test error.
@@ -108,9 +108,9 @@ legend("topright",
 
 ```
 
-#Q10
+# Q10
 
-##a
+## a
 
 ```{r, message=FALSE, warning=FALSE}
 library(ISLR)
@@ -119,7 +119,7 @@ Hitters <- Hitters[!is.na(Hitters$Salary),]
 Hitters$Salary = log(Hitters$Salary)
 ```
 
-##b
+## b
 
 ```{r}
 set.seed(100)
@@ -128,7 +128,7 @@ train_data <- Hitters[train.ind,]
 test_data <- Hitters[-train.ind,]
 ```
 
-##c
+## c
 
 
 ```{r, message=FALSE, warning=FALSE}
@@ -149,7 +149,7 @@ for(i in 1:20){
 }
 ```
 
-##d
+## d
 
 ```{r}
 plot(lambdas,rmse_test,
@@ -159,7 +159,7 @@ plot(lambdas,rmse_test,
      main='Test Error vs lambda ')
 ```
 
-#Q12
+# Q12
 
 The Wine data set from the UC Irvine Repository is already in `rattle` package .
 
@@ -184,7 +184,7 @@ train_data <- wine[ind==1,]
 test_data <- wine[ind==2,]
 ```
 
-##randomForest
+## randomForest
 
 ```{r}
 library(randomForest)
@@ -206,7 +206,7 @@ rf1
 rf2
 ```
 
-##bagging
+## bagging
 
 ```{r, message=FALSE, warning=FALSE}
 set.seed(100)
@@ -230,7 +230,7 @@ confusionMatrix(table(pred2$class,test_data$Type))
 
 
 
-##boosting
+## boosting
 
 
 ```{r, message=FALSE, warning=FALSE}
