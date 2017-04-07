@@ -1,5 +1,3 @@
-
-
 #http://www.stat.illinois.edu/courses/stat100/Notes/Chap9.pdf
 library(ggplot2)
 library(boot)
@@ -33,7 +31,7 @@ x$C1 <- x$C1C2DE - x$C2DE
 
 # mydata
 
-mydata <- x[,c(   'NVotes','Leave','Leava_Prob','AreaType','RegionName','Residents',
+mydata <- x[,c('NVotes','Leave','Leava_Prob','AreaType','RegionName','Residents',
 	            'Households','MeanAge','AdultMeanAge','White',
 	            'Black','Yellow','Owned_Yes','Owned_No',
 	            'NoQuals','L1Quals','L4Quals_plus','Students',
@@ -69,7 +67,7 @@ mydata <- subset(mydata,select =choose_p )
 set.seed(200)
 train_data <- mydata[x$Leave!=-1,]
 pred_data <- mydata[x$Leave==-1,]
-ind <- sample(x = 2,size = nrow(train_data),replace = T,prob = c(0.9,0.1))
+ind <- sample(x = 2,size = nrow(train_data),replace = T,prob = c(0.75,0.25))
 t1_data <- train_data[ind==1,]
 t2_data <- train_data[ind==2,]
 
@@ -96,6 +94,8 @@ t2_data <- train_data[ind==2,]
 
 lm1 <- lm(formula = Leava_Prob ~ ., data = t1_data[,-c(1:2)])
 step(lm1)
+
+
 lm2 <- lm(formula = Leava_Prob ~ AreaType + RegionName + Black + Yellow + 
               L1Quals + L4Quals_plus + Students + Density + C2 + Young_age + 
               Retirement_age, data = t1_data)
@@ -114,30 +114,39 @@ glm2 <- glm(formula = cbind(Leave,NVotes-Leave) ~ AreaType +RegionName + Black +
               L1Quals + L4Quals_plus + Students + Density + C2 + Young_age + 
               Retirement_age, data = t1_data,family=binomial)
 
-glm3 <- glm(formula = Leava_Prob ~ AreaType +RegionName + Black + Yellow + 
+glm3 <- glm(formula = cbind(Leave,NVotes-Leave)~ RegionName + Black + Yellow + 
               L1Quals + L4Quals_plus + Students + Density + C2 + Young_age + 
-              Retirement_age, data = t1_data,family=quasibinomial(link='probit'))
+              Retirement_age, data = t1_data,family=quasibinomial(link='logit'))
+
+glm4 <- glm(formula = cbind(Leave,NVotes-Leave) ~ RegionName + Black + Yellow + 
+              L1Quals + L4Quals_plus + Students + Density + C2 + Young_age + 
+              Retirement_age+Retirement_age:RegionName, data = t1_data,family=quasibinomial(link='logit'))
 
 #------
 
 
-gam2 <- gam(formula = Leava_Prob ~ AreaType + RegionName + s(Black,k=3) + s(Yellow,k=5) + 
+gam1 <- gam(formula = Leava_Prob ~ AreaType + RegionName + s(Black,k=3) + s(Yellow,k=5) + 
               s(L1Quals,k=3) + s(L4Quals_plus,k=3) + s(Students) + s(Density,k=3) + C2 + s(Young_age,k=5) + 
               s(Retirement_age,k=5,by=RegionName), data = t1_data,family=gaussian)
 
-gam3 <- gam(formula = cbind(Leave,NVotes-Leave) ~ AreaType + RegionName + s(Black) + s(Yellow) + 
+gam2 <- gam(formula = cbind(Leave,NVotes-Leave) ~ AreaType + RegionName + s(Black) + s(Yellow) + 
               s(L1Quals) + s(L4Quals_plus) + s(Students) + s(Density) + s(C2) + s(Young_age) + 
               s(Retirement_age), data = t1_data,family=binomial)
 
-gam4 <- gam(formula = Leava_Prob ~ AreaType + RegionName + s(Black) + s(Yellow) + 
+gam3 <- gam(formula = cbind(Leave,NVotes-Leave) ~ AreaType + RegionName + s(Black) + s(Yellow) + 
               s(L1Quals) + s(L4Quals_plus) + s(Students) + s(Density) + s(C2) + s(Young_age) + 
-              s(Retirement_age), data = t1_data,family=quasibinomial(link='probit'))
+              s(Retirement_age), data = t1_data,family=quasibinomial(link='logit'))
+
+gam4 <- gam(formula = cbind(Leave,NVotes-Leave) ~ AreaType + RegionName + s(Black) + s(Yellow) + 
+              s(L1Quals) + s(L4Quals_plus) + s(Students) + s(Density) + s(C2) + s(Young_age,by=RegionName) + 
+              s(Retirement_age), data = t1_data,family=quasibinomial(link='logit'))
+
+gam5 <- gam(formula = cbind(Leave,NVotes-Leave) ~ AreaType  + s(Black) + s(Yellow) + 
+              s(L1Quals) + s(L4Quals_plus) + s(Students) + s(Density) + s(C2) + s(Young_age,by=RegionName) + 
+              s(Retirement_age), data = t1_data,family=quasibinomial(link='logit'))
 
 
-summary(gam3)
-summary(gam2)
-anova.gam(gam2,gam3,test = 'Chisq')
-
+comp(obj = gam5,data = t2_data,type = 'gam')
 
 comp <- function(obj,data,type='lm'){
 	pred <- predict(obj,newdata = data,se.fit = T,type = 'response')
@@ -146,26 +155,33 @@ comp <- function(obj,data,type='lm'){
 	rss <- round(sum( (pred$fit-real)^2),5)
 	tss <- sum((real-mean(real))^2)
 	r2 <- 1-rss/tss
-
     if(type=='lm'){
     	sigma <- sqrt(pred$se.fit^2 + pred$residual.scale^2)
     	} else { 
-            dispersion <- summary(obj)$dispersion
-            p <- pred$fit
-    		sigma <- sqrt( (pred$se.fit^2 + dispersion*  p* (1-p)/data$NVotes) )
+        dispersion <- summary(obj)$dispersion
+        p <- pred$fit
+    		sigma <- sqrt( (pred$se.fit^2 + dispersion* p* (1-p)/data$NVotes) )
     	}
 
     s <- sum( log(sigma) + (real-pred$fit)^2 / (2*sigma^2) )
     return(data.frame(rmse=rmse,rss=rss,r2=r2,s=s))
 }
 
-comp(gam2,t2_data)
 
+comp(obj = glm1,data = t2_data,type = 'glm')
+comp(obj = glm2,data = t2_data,type = 'glm')
+comp(obj = glm3,data = t2_data,type = 'glm')
+comp(obj = glm4,data = t2_data,type = 'glm')
+comp(obj = gam1,data = t2_data,type = 'gam')
+comp(obj = gam2,data = t2_data,type = 'gam')
+comp(obj = gam3,data = t2_data,type = 'gam')
+comp(obj = gam4,data = t2_data,type = 'gam')
+
+
+comp(obj = gam5,data = t2_data,type = 'gam')
 
 ggplot(data=train_data,aes(x=Retirement_age,y=Leava_Prob,col=RegionName))+geom_point()+
     geom_smooth(se=F,method = 'gam',formula = y ~ s(x))
-
-
 
 
 
