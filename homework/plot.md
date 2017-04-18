@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-# 发文量
+#发文量
 
 ```{r, message=FALSE, warning=FALSE}
 library(ggplot2)
@@ -40,7 +40,7 @@ q11 <- q11[order(q11$x3,decreasing = T),]
 head(q11[order(q11$x4,decreasing = T),],10)
 ```
 
-# 作者单位 
+#作者单位 
 
 ```{r}
 q22 <- ddply(.data = q1,.variables = c('x2'),.fun = summarise,x3=sum(x3),x4=sum(x4))
@@ -49,7 +49,7 @@ q22 <- q22[order(q22$x3,decreasing = T),]
 head(q22[order(q22$x4,decreasing = T),],20)
 ```
 
-# 发表情况 
+#发表情况 
 
 ## 时间
 
@@ -69,14 +69,14 @@ pie(table(x5),main='期刊类型')
 ```
 
 
-## 发表期刊
+##发表期刊
 
 ```{r}
 q44 <- ddply(.data = x,.variables = 'x4',nrow)
 head(q44[order(q44$V1,decreasing = T),],10)
 ```
 
-# 关键词 
+#关键词 
 
 ```{r, message=FALSE, warning=FALSE}
 library(wordcloud)
@@ -103,7 +103,7 @@ wordcloud2(table(keyword), size = 2,
 
 
 
-# 对象范围
+#对象范围
 
 ```{r}
 
@@ -111,7 +111,7 @@ x$x8 <- factor(x=x$x8,levels = 1:3,labels = c('某一特定媒体','一国主流
 pie(table(x$x8),main='对象范围')
 ```
 
-# 媒体类型
+#媒体类型
 
 ```{r}
 library(plyr)
@@ -128,7 +128,7 @@ ggplot(data=rt1,aes(x=year,y=V1,col=value))+geom_point()+geom_path()+
 
 ```
 
-# 涉及媒体
+#涉及媒体
 ```{r}
 b <- x[x$x10!='0',c('x10','x11')]
 b$x11 <- str_replace(b$x11,pattern = '[0-9][-]',replacement = '')
@@ -137,7 +137,7 @@ rt2$prob <- round(rt2$V1 / sum(rt2$V1),4)
 head(rt2[order(rt2$V1,decreasing = T),c('x10','x11','V1','prob')],10)
 ```
 
-# 研究国家
+#研究国家
 
 ```{r}
 library(plyr)
@@ -150,8 +150,8 @@ ggplot(data=rt3,aes(x=x6,y=V1,col=x11))+geom_point()+geom_path()+
     theme(panel.background = element_blank())+theme_bw()+ scale_colour_brewer(palette = "Set1")
 
 rt4 <- ddply(.data = d[d$type==2,],.variables = c('x6','x11'),.fun = nrow)
-ggplot(data=rt4,aes(x=x6,y=V1,col=x11))+geom_point()+geom_path()+
-    theme(panel.background = element_blank())+theme_bw()
+
+
 rt33 <- aggregate(V1~x11,rt3,sum)
 rt333 <- tail(rt33[order(rt33$V1),],10)
 rt333$id <- 1:7
@@ -160,18 +160,30 @@ rt44 <- aggregate(V1~x11,rt4,sum)
 rt444 <- tail(rt44[order(rt44$V1),],10)
 rt444$id <- 1:10
 rt444$country <- factor(x=rt444$id,labels = rt444$x11)
+rt4_7 <- tail(rt44[order(rt44$V1),],7)
+df_rt4_7 <- subset(rt4,
+                   subset =x11 %in% c('法国',
+                                      '俄罗斯',
+                                      '韩国',
+                                      '德国',
+                                      '日本',
+                                      '英国',
+                                      '美国') 
+                   )
+pie(rt444$V1,labels = rt444$country,cex=0.5,radius = 1)
 
+ggplot(data=df_rt4_7,aes(x=x6,y=V1,col=x11))+geom_point()+geom_path()+
+    theme(panel.background = element_blank())+theme_bw()+ scale_colour_brewer(palette = "Set1")
 
-
-ggplot(data=rt333,aes(x=country,weights=V1,fill=country))+geom_bar()+theme_bw()
+# ggplot(data=rt333,aes(x=country,weights=V1,fill=country))+geom_bar()+theme_bw()
 pie(rt333$V1,labels = rt333$country,cex=0.5,radius = 1)
 
-ggplot(data=rt444,aes(x=country,weights=V1,fill=country))+geom_bar()+theme_bw()
-pie(rt444$V1,labels = rt444$country,cex=0.5,radius = 1)
+# ggplot(data=rt444,aes(x=country,weights=V1,fill=country))+geom_bar()+theme_bw()
+
 
 ```
 
-# 研究时段
+#研究时段
 
 ```{r, message=FALSE, warning=FALSE}
 e <- x[x$x12!='0',c('x11','x12')]
