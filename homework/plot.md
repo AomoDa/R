@@ -9,7 +9,7 @@ output: html_document
 knitr::opts_chunk$set(echo = TRUE)
 ```
 
-#发文量
+# 发文量
 
 ```{r, message=FALSE, warning=FALSE}
 library(ggplot2)
@@ -40,7 +40,7 @@ q11 <- q11[order(q11$x3,decreasing = T),]
 head(q11[order(q11$x4,decreasing = T),],10)
 ```
 
-#作者单位 
+# 作者单位 
 
 ```{r}
 q22 <- ddply(.data = q1,.variables = c('x2'),.fun = summarise,x3=sum(x3),x4=sum(x4))
@@ -49,7 +49,7 @@ q22 <- q22[order(q22$x3,decreasing = T),]
 head(q22[order(q22$x4,decreasing = T),],20)
 ```
 
-#发表情况 
+# 发表情况 
 
 ## 时间
 
@@ -69,14 +69,14 @@ pie(table(x5),main='期刊类型')
 ```
 
 
-##发表期刊
+## 发表期刊
 
 ```{r}
 q44 <- ddply(.data = x,.variables = 'x4',nrow)
 head(q44[order(q44$V1,decreasing = T),],10)
 ```
 
-#关键词 
+# 关键词 
 
 ```{r, message=FALSE, warning=FALSE}
 library(wordcloud)
@@ -103,7 +103,7 @@ wordcloud2(table(keyword), size = 2,
 
 
 
-#对象范围
+# 对象范围
 
 ```{r}
 
@@ -111,7 +111,7 @@ x$x8 <- factor(x=x$x8,levels = 1:3,labels = c('某一特定媒体','一国主流
 pie(table(x$x8),main='对象范围')
 ```
 
-#媒体类型
+# 媒体类型
 
 ```{r}
 library(plyr)
@@ -128,7 +128,7 @@ ggplot(data=rt1,aes(x=year,y=V1,col=value))+geom_point()+geom_path()+
 
 ```
 
-#涉及媒体
+# 涉及媒体
 ```{r}
 b <- x[x$x10!='0',c('x10','x11')]
 b$x11 <- str_replace(b$x11,pattern = '[0-9][-]',replacement = '')
@@ -137,7 +137,7 @@ rt2$prob <- round(rt2$V1 / sum(rt2$V1),4)
 head(rt2[order(rt2$V1,decreasing = T),c('x10','x11','V1','prob')],10)
 ```
 
-#研究国家
+# 研究国家
 
 ```{r}
 library(plyr)
@@ -171,7 +171,7 @@ pie(rt444$V1,labels = rt444$country,cex=0.5,radius = 1)
 
 ```
 
-#研究时段
+# 研究时段
 
 ```{r, message=FALSE, warning=FALSE}
 e <- x[x$x12!='0',c('x11','x12')]
