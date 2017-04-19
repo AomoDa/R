@@ -1,9 +1,8 @@
-
+library(leaps)
 library(caret)
 library(lattice)
 library(MASS)
 library(randomForest)
-library(adabag)
 library(rpart)
 library(gbm)
 library(plyr)
@@ -28,9 +27,27 @@ x$months <- as.numeric(substr(x$date,6,7))
 x_agge <- ddply(.data = x[,-1],.variables = c('years','months'),.fun = colMeans)
 
 # merge data
-xx <- merge(x_agge,price)
 xxx <- merge(x,price)
 
+#--------------------------------------------------------------
+# Feature Selection
+#--------------------------------------------------------------
+
+# 
+set.seed(2017)
+reg1 <- regsubsets(price~.,data=xxx[,-c(1:3)],really.big = TRUE,nvmax=10)
+reg.summ <- summary(reg1)
+best_id <- which.min(reg.summ$bic)
+best_id
+
+Feature_Name <- names(coef(reg1,id=best_id))[-1]
+Feature_Name
+# create new data set 
+mydf <- cbind(xxx[,c(1:3,55)],subset(xxx,select=Feature_Name))
+
+# data split
+train_data <- subset(x = mydf,subset = date < as.Date('2017-03-01'))
+test_data <- subset(x = mydf,subset = date >= as.Date('2017-03-01'))
 
 # define function
 bs_mean <- function(x) {
@@ -45,35 +62,44 @@ bs_mean <- function(x) {
 # Linear Models
 #--------------------------------------------------------------
 
-lm1 <- lm(price~.,data=xxx[,-c(1:3)])
-stepAIC(lm1,direction = 'both')
-lm2 <- lm(formula = price ~ k1_bd_mob + k1_weixin + k2_bd_pc + k2_bd_mob + 
-    k2_sg_mob + k3_bd_mob + k3_weixin + k5_bd_pc + k5_bd_mob + 
-    k5_sg_mob + k6_bd_mob + k6_weixin + k6_media + k7_sg_pc + 
-    k7_media + k8_sg_pc + k8_media + k9_bd_mob + k10_bd_pc + 
-    k10_bd_mob + lag1_price, data = xxx[, -c(1:3)])
-lm.pred <- data.frame(years=xxx$years,months=xxx$months,pred=lm2$fitted.values)
+lm1 <- lm(price~.,data=train_data[,-c(1:3)])
+lm2 <- stepAIC(lm1,direction = 'both',trace = F)
+anova(lm1,lm2,test='Chisq')
+summary(lm2)
+
+
+lm.pred <- data.frame(years=test_data$years,months=test_data$months,pred=predict(lm2,test_data))
 lm.result <- merge(aggregate(pred~years+months,data=lm.pred,bs_mean),price[,-4])
 lm.result
-lm.rmse <- mean((lm.result$pred-lm.result$price)^2)
-lm.rmse
+lm.error <- (lm.result$pred-lm.result$price) / lm.result$price
+lm.error
+
+
+#--------------------------------------------------------------
+# LASSO Models
+#--------------------------------------------------------------
+
+X <- model.matrix(price~.,data=train_data[,-c(1:3)])[,-1]
+Y <- train_data$price
+lasso1 <- cv.glmnet(X,Y,alpha = 1,nfolds=3)
+pred <- predict(lasso1,s=lasso1$lambda.1se,newx = model.matrix(price~.,data=test_data[,-c(1:3)])[,-1])
+lasso.pred <- data.frame(years=test_data$years,months=test_data$months,pred=as.numeric(pred))
+lasso.result <- merge(aggregate(pred~years+months,data=lasso.pred,bs_mean),price[,-4])
+lasso.result
+lasso.error <- (lasso.result$pred-lasso.result$price) / lasso.result$price
+lasso.error
+
 
 
 #--------------------------------------------------------------
 # Regression Trees
 #--------------------------------------------------------------
-rt1 <- rpart(price~.,data=xxx[,-c(1:3)])
-rt.pred <- data.frame(years=xxx$years,months=xxx$months,pred=predict(rt1,type = 'vector'))
+rt1 <- rpart(price~.,data=train_data[,-c(1:3)],cp=0.01)
+rt.pred <- data.frame(years=test_data$years,months=test_data$months,pred=predict(rt1,test_data))
 rt.result <- merge(aggregate(pred~years+months,data=rt.pred,bs_mean),price[,-4])
 rt.result
-rt.rmse <- mean((rt.result$pred-rt.result$price)^2)
-rt.rmse
-
-# RpartfitControl <- trainControl(method = "repeatedcv",number = 10,repeats = 3)
-# rpart_tune <- expand.grid(cp=seq(0.001,0.1,0.005))
-# rt0 <- train(price~.,data=xxx[,-c(1:3)],method='rpart',trControl = RpartfitControl,tuneGrid=rpart_tune)
-# rt.pred <- data.frame(years=xxx$years,months=xxx$months,pred=predict(rt0))
-# merge(aggregate(pred~years+months,data=rt.pred,bs_mean),price[,-4])
+rt.error <- (rt.result$pred-rt.result$price) / rt.result$price
+rt.error
 
 
 
@@ -81,43 +107,52 @@ rt.rmse
 # randomForest
 #--------------------------------------------------------------
 
-p <- ncol(xxx[,-c(1:3)])-1
-rf1 <- randomForest(price~.,data=xxx[,-c(1:3)],ntree=500,mtry=sqrt(p))
-rf.pred <- data.frame(years=xxx$years,months=xxx$months,pred=rf1$predicted)
+set.seed(12345)
+p <- ncol(train_data[,c(1:3)])-1
+rf1 <- randomForest(price~.,data=train_data[,-c(1:3)],ntree=500,mtry=sqrt(p))
+rf.pred <- data.frame(years=test_data$years,months=test_data$months,pred=predict(rf1,test_data))
 rf.result <- merge(aggregate(pred~years+months,data=rf.pred,bs_mean),price[,-4])
 rf.result
-rf.rmse <- mean((rf.result$pred-rf.result$price)^2)
-rf.rmse
+rf.error <- (rf.result$pred-rf.result$price) / rf.result$price
+rf.error
 
 
 #--------------------------------------------------------------
 # Generalized Boosted Regression Modeling
 #--------------------------------------------------------------
 
-gbm1 <- gbm(price~.,data=xxx[,-c(1:3)],
-	n.trees=1000,
-	distribution='gaussian',
+
+set.seed(12345)
+gbm1 <- gbm(price~.,data=train_data[,-c(1:3)],
+	n.trees=5000,
+	distribution=list(name="quantile",alpha=0.8),
 	interaction.depth=4,
-	shrinkage=0.01)
-gbm.pred <- data.frame(years=xxx$years,months=xxx$months,pred=gbm1$fit)
+	shrinkage=0.1,
+	n.minobsinnode = 10)
+
+gbm.pred <- data.frame(years=test_data$years,
+	months=test_data$months,
+	pred=predict(gbm1,test_data,n.trees = 5000))
 gbm.result <- merge(aggregate(pred~years+months,data=gbm.pred,bs_mean),price[,-4])
 gbm.result
-gbm.rmse <- mean((gbm.result$pred-gbm.result$price)^2)
-gbm.rmse
+gbm.error <- (gbm.result$pred-gbm.result$price) / gbm.result$price
+gbm.error
 
 
 #--------------------------------------------------------------
 # Support Vector Machines
 #--------------------------------------------------------------
 
-svr1 <- svm(x=xxx[,-c(1:3,55)],
-	y=xxx[,55],
+set.seed(2018)
+svr1 <- svm(x=train_data[,-c(1:4)],
+	y=train_data[,4],
 	type='nu-regression',
 	kernel='linear',
 	degree=5)
-svr.pred <- data.frame(years=xxx$years,months=xxx$months,pred=svr1$fitted)
+svr.pred <- data.frame(years=test_data$years,
+	months=test_data$months,
+	pred=predict(svr1,newdata = test_data[,-c(1:4)]))
 svr.result <- merge(aggregate(pred~years+months,data=svr.pred,bs_mean),price[,-4])
 svr.result
-svr.rmse <- mean((svr.result$pred-svr.result$price)^2)
-svr.rmse
-
+svr.error <- (svr.result$pred-svr.result$price) / svr.result$price
+svr.error
