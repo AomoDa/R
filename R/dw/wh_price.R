@@ -10,6 +10,7 @@ library(e1071)
 library(effects)
 library(glmnet)
 library(rpart.plot)
+library(mice)
 
 
 #--------------------------------------------------------------
@@ -42,7 +43,7 @@ x <- read.table('x.csv',header = T,sep = ',',stringsAsFactors = F)
 price <- read.csv('price.csv',header = T)
 # 求上月房价
 price$lag1_price <- c(NA,price$price[-nrow(price)])
-
+# price$lag2_price <- c(NA,NA,price$price[ c(-nrow(price),-nrow(price)+1)])
 # Date
 # 处理日期
 x$date <- as.Date(x$date)
@@ -55,9 +56,17 @@ x[is.na(x)] <- -999
 # 删除方差是0的变量
 x <- x[,-nearZeroVar(x)]
 
+#Multivariate Imputation by Chained Equations 
+x[x==-999] <- NA
+set.seed(2017)
+imp <- mice(x[,-1],method ='pmm')
+a <- as.data.frame(complete(imp,action = 1))
+
+newx <- as.data.frame(cbind(data.frame(date=x$date),a))
+
 # 房价数据和关键词数据合并
 # 讲关键词数据和房价数据合并，合并实在代码中处理的。
-xxx <- merge(x,price,all.x = T)
+xxx <- merge(newx,price,all.x = T)
 #--------------------------------------------------------------
 # Feature Selection
 # 变量选择
@@ -106,7 +115,7 @@ bs_mean <- function(x) {
 # Linear Models
 #--------------------------------------------------------------
 
-lm1 <- lm(price~.,data=train_data[,-c(1:3)])
+lm1 <- lm(price~.,data=train_data[,-3])
 lm2 <- stepAIC(lm1,direction = 'both',trace = F)
 anova(lm1,lm2,test='Chisq')
 summary(lm2)
@@ -138,7 +147,7 @@ lm.error
 # 选取交叉验证误差最小的lambda值。最后，按照得到的lambda值，用全部数据重新拟合模型即可。
 #--------------------------------------------------------------
 
-X <- model.matrix(price~.,data=train_data[,-c(1:3)])[,-1]
+X <- model.matrix(price~.,data=train_data[,-3])[,-1]
 Y <- train_data$price
 lasso1 <- cv.glmnet(X,Y,alpha = 1,nfolds=3)
 
@@ -146,7 +155,7 @@ lasso1 <- cv.glmnet(X,Y,alpha = 1,nfolds=3)
 # fitted
 fitted <- predict(lasso1,
 	s=lasso1$lambda.1se,
-	newx = model.matrix(price~.,data=train_data[,-c(1:3)])[,-1])
+	newx = model.matrix(price~.,data=train_data[,-3])[,-1])
 lasso.fitted <- data.frame(years=train_data$years,
 	months=train_data$months,
 	pred=as.numeric(fitted))
@@ -159,7 +168,7 @@ lasso.result
 # pred
 pred <- predict(lasso1,
 	s=lasso1$lambda.1se,
-	newx = model.matrix(price~.,data=test_data[,-c(1:3)])[,-1])
+	newx = model.matrix(price~.,data=test_data[,-3])[,-1])
 lasso.pred <- data.frame(years=test_data$years,
 	months=test_data$months,
 	pred=as.numeric(pred))
@@ -174,8 +183,7 @@ lasso.error
 # Regression Trees
 # 修建cp值确定最优树
 #--------------------------------------------------------------
-rt1 <- rpart(price~.,data=train_data[,-c(1:3)],cp=0.01)
-rpart.plot(rt1,type = 1)
+rt1 <- rpart(price~.,data=train_data[,-3],cp=0.01,method='anova')
 
 # fitted
 rt.fitted <- data.frame(years=train_data$years,
@@ -202,8 +210,8 @@ rt.error
 #--------------------------------------------------------------
 
 set.seed(12345)
-p <- ncol(train_data[,c(1:3)])-1
-rf1 <- randomForest(price~.,data=train_data[,-c(1:3)],ntree=500,mtry=sqrt(p))
+p <- ncol(train_data[,-c(3)])-1
+rf1 <- randomForest(price~.,data=train_data[,-3],ntree=500,mtry=sqrt(p))
 par(mfrow=c(1,2))
 plot(rf1)
 varImpPlot(rf1)
@@ -241,18 +249,19 @@ rf.error
 #--------------------------------------------------------------
 
 
-set.seed(12345)
-gbm1 <- gbm(price~.,data=train_data[,-c(1:3)],
-	n.trees=5000,
-	distribution=list(name="quantile",alpha=0.8),
+set.seed(1234)
+gbm1 <- gbm(price~.,data=train_data[,-3],
+	n.trees=1000,
+	distribution=list(name="quantile",alpha=0.2),
 	interaction.depth=4,
-	shrinkage=0.1,
-	n.minobsinnode = 10)
+	shrinkage=0.2,
+	n.minobsinnode = 10,
+	cv.folds=3)
 
 # fitted
 gbm.fitted <- data.frame(years=train_data$years,
 	months=train_data$months,
-	pred=predict(gbm1,train_data,n.trees = 5000))
+	pred=predict(gbm1,train_data,n.trees = 1000))
 gbm.result <- merge(aggregate(pred~years+months,data=gbm.fitted,bs_mean),price[,-4])
 gbm.result
 
@@ -260,7 +269,7 @@ gbm.result
 # pred
 gbm.pred <- data.frame(years=test_data$years,
 	months=test_data$months,
-	pred=predict(gbm1,test_data,n.trees = 5000))
+	pred=predict(gbm1,test_data,n.trees = 1000))
 gbm.result <- merge(aggregate(pred~years+months,data=gbm.pred,bs_mean),price[,-4])
 gbm.result
 gbm.error <- (gbm.result$pred-gbm.result$price) / gbm.result$price
@@ -272,25 +281,26 @@ gbm.error
 #--------------------------------------------------------------
 
 set.seed(2018)
-svr1 <- svm(x=train_data[,-c(1:4)],
+svr1 <- svm(x=train_data[,-c(3:4)],
 	y=train_data[,4],
 	type='nu-regression',
 	kernel='linear',
-	degree=5)
+	scale=TRUE,
+	cost=2)
 
 # fitted
 svr.fitted <- data.frame(years=train_data$years,
 	months=train_data$months,
-	pred=predict(svr1,newdata = train_data[,-c(1:4)]))
-svr.result <- merge(aggregate(pred~years+months,data=svr.fitted,bs_mean),price[,-4])
+	pred=predict(svr1,newdata = train_data[,-c(3:4)]))
+svr.result <- merge(aggregate(pred~years+months,data=svr.fitted,bs_mean),price[,-c(4)])
 svr.result
 
 
 # pred
 svr.pred <- data.frame(years=test_data$years,
 	months=test_data$months,
-	pred=predict(svr1,newdata = test_data[,-c(1:4)]))
-svr.result <- merge(aggregate(pred~years+months,data=svr.pred,bs_mean),price[,-4])
+	pred=predict(svr1,newdata = test_data[,-c(3:4)]))
+svr.result <- merge(aggregate(pred~years+months,data=svr.pred,bs_mean),price[,-c(4)])
 svr.result
 svr.error <- (svr.result$pred-svr.result$price) / svr.result$price
 svr.error
@@ -300,9 +310,19 @@ svr.error
 #--------------------------------------------------------------
 # 预测数据
 #--------------------------------------------------------------
+#LM
+lm.forecast <- data.frame(years=forecast_data$years,
+	months=forecast_data$months,
+	pred=predict(lm2,newdata = forecast_data[,-c(3:4)]) )
+lm.result <- merge(aggregate(pred~years+months,data=lm.forecast,bs_mean),price[,-4])
+lm.result
 
+#SVR
 svr.forecast <- data.frame(years=forecast_data$years,
 	months=forecast_data$months,
-	pred=predict(svr1,newdata = forecast_data[,-c(1:4)]) )
+	pred=predict(svr1,newdata = forecast_data[,-c(3:4)]) )
 svr.result <- merge(aggregate(pred~years+months,data=svr.forecast,bs_mean),price[,-4])
 svr.result
+
+# Final
+mean(c(svr.result$pred,lm.result$pred))
