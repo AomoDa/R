@@ -73,7 +73,6 @@ for (i in 1:length(variables)) {
  t.p <- t.test(value.trans~x.g, var.equal=bart.pvalue >0.05)$p.value
  d <- round(cohen.d(value.trans,x.g)$estimate,2)
  magnitude <- cohen.d(value.trans,x.g)$magnitude
- w.p <- ifelse(w.p >0.05,w.p,w.p + 0.05)
  rt <- rbind(rt,data.frame(variable=variables[i],
  	        transform=p1,
  	        w.pvalue=round(w.p,4),
