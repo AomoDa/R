@@ -1,6 +1,6 @@
 ---
 title: "HW4"
-author: "Cheng Liao"
+author: "--"
 date: '2017-05-04'
 output:
   word_document:
@@ -17,7 +17,7 @@ knitr::opts_chunk$set(echo = TRUE)
 ```
 
 
-#Q1 CONFIDENCE INTERVALS
+# Q1 CONFIDENCE INTERVALS
 
 - The sample means of Variety 1 is 4.04 and The standard deviation of Variety 1 is 1.4569.
 - The sample means of Variety 2 is 2.36 and The standard deviation of Variety 2 is 0.3273.
@@ -26,28 +26,28 @@ knitr::opts_chunk$set(echo = TRUE)
 - So the 95% confidence interval of Variety 1 is $4.04 \pm 2.2622*0.4607 =[ 2.9978, 5.0822]$ 
 - The 95% confidence interval of Variety 2 is $2.36 \pm 2.2622*0.1035=[2.1259,2.5941]$
 
-#Q2 UNDERSTANING DATA CORRELATIONS
+# Q2 UNDERSTANING DATA CORRELATIONS
 
-##a
+## a
 
 There is a negative relationship between temperature and crawling age,which means that the average crawling age of the babies would decrease with the increase of temperature.
 
 
-##b
+## b
 
 The  relationship would not change, because that Celsius and Fahrenheit are different units for measuring temperature and they are linear.
 
-##c
+## c
 
 The correlation would still be -.70, since correlation is a measure of the linear relationship and  changing unit for temperature would not change correlation .
 
-#Q3 INFERENCE IN REGRESSION ANALYSIS
+# Q3 INFERENCE IN REGRESSION ANALYSIS
 
-##a
+## a
 
 There is a positive linear relationship between cans of beer consumed and BAC,which means that BAC would increase with the increase of cans of beer.
 
-##b
+## b
 
 - **Slope**: For every beer consumed an individual’s BAC increases by 0.0180 grams per deciliter.
 - **Intercept**: When an individual consumes no beers,their blood alcohol content would be  -0.0128 grams per deciliter.
@@ -57,48 +57,48 @@ $$BAC = 0.0180 * beers − 0.0127$$
 
 
 
-##c
+## c
 
 - Null hypotheses: $\beta_{beers}=0$ ,which means that the data cann't provide  a  strong evidence that drinking more cans of beer is associated with an increase in blood alcohol.
 - Alternative hypotheses: $\beta_{beers} \neq 0$,which means that the data can provide a  strong evidence that drinking more cans of beer is associated with an increase in blood alcohol.
 - The p value is zero,which is very statistically significant and means that we should reject the $H_0$ .So my conclusion is that the data can provide a  strong evidence that drinking more cans of beer is associated with an increase in blood alcohol.
 
-##d
+## d
 
 
 The $R^2=r^2=0.89^2=0.7921$,which means that our model can explain 79.21% variance of BAC using this linear model.
 
 
-##e
+## e
 
 **No**. In this question, people in bar  maybe a different population sampled under different conditions with many unknown variables including gender, weight and drinking habits.
 
-#Q4 INFERENCE IN REGRESSION ANALYSIS
+# Q4 INFERENCE IN REGRESSION ANALYSIS
 
-##a
+## a
 
 - $H_0$ : the age difierence between husbands and wives is  consistent across ages.
 - $H_1$ : the age difierence between husbands and wives is not  consistent across ages.
 - The $t_{0.975}=1.9742$ with $df=168$.
 - Confidence intervals for $age\_husband$ in this model is $0.9112 \pm 1.9742 * 0.0259 =[0.8601,0.9623]$,which does not include 1 and means that I should reject $H_O$. So the age difierence between husbands and wives is **not  consistent across ages**.
 
-##b
+## b
 
 $$Age_{wife}= 0.9112 ∗ Age_{husband} + 1.5740$$
 
-##c
+## c
 
 - **Slope** : His wife's age  woild increase by 0.9112 year when the husband increase in 1 year old
 - **Intercept** : When a husband's age is zero, his wife's age would be  1.57 years.
 
-##d
+## d
 
 The correlation of ages in this data set is 0.9381.
 
 $$r=\sqrt{R^2}=\sqrt{0.88}=0.9381$$.
 
 
-##e
+## e
 
 His wife's age would be 51.69.And because $R^2=0.88$,which is good ,I think this prediction is reliable.
 
@@ -107,13 +107,13 @@ $$Age_{wife}  = 0.9112 ∗ Age_{husband} + 1.5740 \\ = 0.9112*55+1.5740 \\= 51.6
 
 
 
-##f
+## f
 
 In this model,both partners' ages in the data set  are below 65 years.So it would not be wise to attempt to estimate the age of the wife of an 85 year old man.
 
 #Q5 FITTING A REGRESSION LINE
 
-##a
+## a
 
 ```{r, echo=FALSE, message=FALSE, warning=FALSE}
 library(knitr)
@@ -134,7 +134,7 @@ kable(a[,c(3,1,2)],
       digits = 2)
 ```
 
-##b
+## b
 
 The model is 
 $$poppc\_urban=173.5751 -1.4882 * pct\_owner\_occupied $$
@@ -152,7 +152,7 @@ kable(summary(lm1)$coefficients,
 )
 ```
 
-##c
+## c
 
 I think a linear functional is not  appropriate for describing the relationship in this data.The Scatter plot tells me that there is not a strong linear correlation between percent of houses occupied by owners and percent of urban population.And the correlation coefficient of them is -0.54,which is low.
 
@@ -165,7 +165,7 @@ abline(lm1,lty=2,lwd=2,col='orange')
 ```
 
 
-##d
+## d 
 
 The new model is 
 $$poppc\_urban=4.3279 * pct\_owner\_occupied - 0.0479 * pct\_owner\_occupied^2 $$
