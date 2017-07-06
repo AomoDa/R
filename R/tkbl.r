@@ -1,3 +1,4 @@
+
 myf <- function(init,vec,cost_yesterday=1/3,bound=2,plot=TRUE) {
 	cost_today <- 1- cost_yesterday
 	n <- length(vec)
@@ -15,5 +16,7 @@ myf <- function(init,vec,cost_yesterday=1/3,bound=2,plot=TRUE) {
 		plot(1:n,rt,type='b',pch=16,xlab='',ylab='')
 		abline(h=bound,lty=2,lwd=1.5,col='red')		
 	}
-	return(match(TRUE,rt<2))
+	out <- match(TRUE,rt<2)
+	into <- match(TRUE,rt>=2)
+	return(list(rt=rt,out=out,into=into))
 }
