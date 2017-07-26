@@ -34,10 +34,11 @@ str(x)
 #Multivariate Imputation by Chained Equations
 #----------------------------------------------
 
-set.seed(6666)
-x_imp <- mice(data = x,method = 'pmm')
-plot(x_imp)
-xx <- complete(x_imp,action = 4)
+#set.seed(6666)
+#x_imp <- mice(data = x,method = 'pmm')
+#plot(x_imp)
+# xx <- complete(x_imp,action = 4)
+xx <- na.omit(x)
 
 #----------------------------------------------
 # PCA
@@ -45,6 +46,8 @@ xx <- complete(x_imp,action = 4)
 
 # data scale
 y <- xx[,1:6]
+
+y$y3[y$y3 >=2] <- 2
 y$y4 <- y$y4 / 100
 y$y5 <- 1 / y$y5
 y$y6 <- scale(y$y6)
@@ -66,7 +69,7 @@ pca_y <- pc1$scores
 
 # 合并结果：
 ## 计算系数
-coef_pca <- c(0.33,0.23)
+coef_pca <- c(0.36,0.22)
 coef_pca <- coef_pca / sum(coef_pca)
 ## 合并成评价指标Y
 Y <- round(pca_y %*% as.matrix(coef_pca),4)
@@ -129,20 +132,44 @@ ggplot(data = mydf,aes(x=x13,y=y,col=as.factor(QUAN)))+
 #----------------------------------------------
 # Quantile Regression
 #----------------------------------------------
-
 # http://topepo.github.io/caret/available-models.html
-getModelInfo(model = 'rqnc')
-getModelInfo(model = 'rqlasso')
+#getModelInfo(model = 'rqnc')
+#getModelInfo(model = 'rqlasso')
+#
+# train(y~.,data=mydf[,-15],method='rqnc')
+#set.seed(200)
+#lamb <- expand.grid(lambda=c(seq(0,1,by=0.05),seq(2,100,10)))
+#tc <- trainControl(method = "repeatedcv",number = 3,repeats = 3)
+#
+#train(y~.,
+#	data=mydf[,-15],
+#	method='rqlasso',
+#	tau=0.3,
+#	tuneGrid=lamb,
+#	metric='Rsquared',
+#	trControl=tc)
 
-train(y~.,data=mydf[,-15],method='rqnc')
-set.seed(200)
-lamb <- expand.grid(lambda=seq(0,1,by=0.05))
-tc <- trainControl(method = "repeatedcv",number = 3,repeats = 3)
+# OLS LM
+lm1 <- lm(y~.,data=mydf[,-15])
+lm2 <- step(lm1,trace = F)
+summary(lm2)
+# rmse
+mean((lm2$residuals)^2)
 
-train(y~.,
-	data=mydf[,-15],
-	method='rqlasso',
-	tau=c(seq(0.2,0.8,0.99)),
-	tuneGrid=lamb,
-	metric='Rsquared',
-	trControl=tc)
+# Quantile Regression
+rq1 <- rq(y~.,data=mydf,tau=seq(0.1, 0.9, by=0.1))
+rq1
+plot(rq1)
+
+#SSE
+rmse <- apply(rq1$residuals,2,function(x) mean(x^2))
+rmse
+plot(seq(0.1, 0.9, by=0.1),rmse,type='b')
+
+
+
+
+
+
+
+
