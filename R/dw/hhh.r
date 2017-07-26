@@ -23,6 +23,9 @@ library(mice)
 library(ggplot2)
 library(plotly)
 library(psych)
+library(caret)
+library(quantreg)
+library(rqPen)
 
 x <- read.csv('mydata.csv',header = T,stringsAsFactors = F)
 str(x)
@@ -63,10 +66,10 @@ pca_y <- pc1$scores
 
 # 合并结果：
 ## 计算系数
-a <- 0.33 / 0.56
-b <- 0.23 / 0.56
+coef_pca <- c(0.33,0.23)
+coef_pca <- coef_pca / sum(coef_pca)
 ## 合并成评价指标Y
-Y <- pca_y[,1] * a + pca_y[,2] * b
+Y <- round(pca_y %*% as.matrix(coef_pca),4)
 
 
 
@@ -127,3 +130,19 @@ ggplot(data = mydf,aes(x=x13,y=y,col=as.factor(QUAN)))+
 # Quantile Regression
 #----------------------------------------------
 
+# http://topepo.github.io/caret/available-models.html
+getModelInfo(model = 'rqnc')
+getModelInfo(model = 'rqlasso')
+
+train(y~.,data=mydf[,-15],method='rqnc')
+set.seed(200)
+lamb <- expand.grid(lambda=seq(0,1,by=0.05))
+tc <- trainControl(method = "repeatedcv",number = 3,repeats = 3)
+
+train(y~.,
+	data=mydf[,-15],
+	method='rqlasso',
+	tau=c(seq(0.2,0.8,0.99)),
+	tuneGrid=lamb,
+	metric='Rsquared',
+	trControl=tc)
